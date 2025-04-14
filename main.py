@@ -3,6 +3,8 @@ import Modules.birds as bird
 import Modules.flying_mechanism as fly
 import Modules.settings as settings
 import Modules.loading_screen as load
+import Main_Menu as menu
+import random
 
 pygame.init()
 
@@ -10,7 +12,7 @@ pygame.init()
 size = width, height = 1920, 1080
 speed = [10,-10]
 black = 0, 0, 0
-screen = pygame.display.set_mode((1920,1080), settings.flags)
+screen = pygame.display.set_mode((1920,1080))
 pygame.display.set_caption("ANGRY BIRDS")
 # red = pygame.image.load(bird.birds["Red"][0])
 # red = ScaleImage(red)
@@ -20,6 +22,8 @@ pygame.display.set_caption("ANGRY BIRDS")
 # clock = pygame.time.Clock()
 
 load.loadScreen(screen)
+
+menu.menu(screen)
 
 
 

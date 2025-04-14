@@ -3,6 +3,7 @@ import pygame, sys, time
 size = width, height = 1920, 1080
 flags = pygame.FULLSCREEN
 black = 0, 0, 0
+ifAudio = True
 
 def ScaleImage(image):
     return pygame.transform.scale(image,(50,50))

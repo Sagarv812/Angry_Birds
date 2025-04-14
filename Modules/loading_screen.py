@@ -36,7 +36,7 @@ def loadScreen(screen):
         screen.blit(logo, logo_rect)
 
         progress += 1
-        time.sleep(0.05)
+        time.sleep(0.02)
         if progress >100:
             break
 
