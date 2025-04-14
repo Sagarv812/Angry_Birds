@@ -23,10 +23,14 @@ def menu(screen):
 
     sound_on = py.image.load("Media/Settings/volume_on_1.png")
     sound_on = py.transform.scale_by(sound_on, 0.2)
-
+    sound_rect = sound_on.get_rect()
     sound_off = py.image.load("Media/Settings/volume_off_1.png")
     sound_off = py.transform.scale_by(sound_off, 0.2)
     currentSound = sound_on
+
+    play_init = py.image.load("Media/play_1.png")
+    play_init = py.transform.scale_by(play_init, 0.5)
+    play_rect = play_init.get_rect()
 
     startTime = py.time.get_ticks()
 
@@ -38,9 +42,10 @@ def menu(screen):
     py.mixer.music.set_volume(0.5)
     isMusicPaused = False
 
+    
 
     while True:
-        
+        multiplier = [1,1]
         for event in py.event.get():
             if event.type == py.QUIT: sys.exit()
 
@@ -66,15 +71,27 @@ def menu(screen):
             py.mixer.music.unpause()
             isMusicPaused = False
 
+        if sound_rect.collidepoint(py.mouse.get_pos()):
+            multiplier[0] = 1.2
+
+        if play_rect.collidepoint(py.mouse.get_pos()):
+            multiplier[1] = 1.4
+
         #Sound button
-        sound = py.transform.scale_by(currentSound, returnScale(startTime))
+        sound = py.transform.scale_by(currentSound, multiplier[0]*returnScale(startTime))
         sound_rect = sound.get_rect()
         sound_rect.center = (1600, 800)
+
+        #Play button
+        play = py.transform.scale_by(play_init, multiplier[1]*returnScale(startTime))
+        play_rect = play.get_rect()
+        play_rect.center = (settings.width/2, 800)
 
         screen.fill(settings.black)
         screen.blit(bg, (0,0))
         screen.blit(logo, logo_rect)
         screen.blit(sound, sound_rect)
+        screen.blit(play, play_rect)
         py.display.flip()
 
 

@@ -21,7 +21,7 @@ pygame.display.set_caption("ANGRY BIRDS")
 
 # clock = pygame.time.Clock()
 
-load.loadScreen(screen)
+#load.loadScreen(screen)
 
 menu.menu(screen)
 
