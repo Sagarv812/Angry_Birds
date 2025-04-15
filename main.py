@@ -3,6 +3,7 @@ import Modules.birds as bird
 import Modules.flying_mechanism as fly
 import Modules.settings as settings
 import Modules.loading_screen as load
+import Modules.player_names as Players
 import Main_Menu as menu
 import random
 
@@ -21,9 +22,12 @@ pygame.display.set_caption("ANGRY BIRDS")
 
 # clock = pygame.time.Clock()
 
-#load.loadScreen(screen)
+load.loadScreen(screen)
 
 menu.menu(screen)
 
+Players.naming(screen)
 
+print("Player 1: ", settings.player1)
+print("Player 2: ", settings.player2)
 
