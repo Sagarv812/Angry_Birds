@@ -38,6 +38,7 @@ def loadScreen(screen):
         progress += 1
         time.sleep(0.02)
         if progress >100:
+            settings.state = "menu"
             break
 
         py.display.flip()

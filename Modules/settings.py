@@ -13,6 +13,7 @@ RED = (185,15,18)
 YELLOW = (251,204,22)
 BLUE = (11, 76, 227)
 GREEN = (19, 212, 70)
+state = "load"
 
 def ScaleImage(image):
     return pygame.transform.scale(image,(50,50))

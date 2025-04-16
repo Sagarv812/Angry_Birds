@@ -22,11 +22,14 @@ pygame.display.set_caption("ANGRY BIRDS")
 
 # clock = pygame.time.Clock()
 
-load.loadScreen(screen)
+while True:
 
-menu.menu(screen)
-
-Players.naming(screen)
+    if settings.state == "load":
+        load.loadScreen(screen)
+    elif settings.state == "menu":
+        menu.menu(screen)
+    elif settings.state == "naming":
+        Players.naming(screen)
 
 print("Player 1: ", settings.player1)
 print("Player 2: ", settings.player2)

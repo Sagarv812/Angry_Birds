@@ -63,6 +63,7 @@ def menu(screen):
                         currentSound=sound_on
 
                 if play_rect.collidepoint(event.pos):
+                    settings.state = "naming"
                     return
                 
                 if quit_rect.collidepoint(event.pos):

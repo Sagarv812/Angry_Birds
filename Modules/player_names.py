@@ -14,6 +14,11 @@ def naming(screen):
     vs_rect = vs.get_rect()
     vs_rect.center = (settings.width/2, settings.height/2)
     
+    backButtonInit = py.image.load("Media/back.png")
+    backButtonInit = py.transform.scale_by(backButtonInit, 0.5)
+    backButtonRect = backButtonInit.get_rect()
+    backButtonRect.center = (100+w/2, settings.height-100-h/2)
+    
 
     font = py.font.SysFont("ubuntu",80)
     fontSmaller = py.font.Font("Media/angrybirds-regular.ttf", 60)
@@ -51,6 +56,8 @@ def naming(screen):
 
     while True:
         
+        multiplier = 1
+
         for event in py.event.get():
 
             if event.type == py.QUIT: sys.exit()
@@ -63,6 +70,11 @@ def naming(screen):
                     elif input_box2.collidepoint(event.pos):
                         active2 = True
                         active1 = False
+                    elif backButtonRect.collidepoint(event.pos):
+                        settings.player1 = "Player 1"
+                        settings.player2 = "Player 2"
+                        settings.state = "menu"
+                        return
                     else:
                         active1 = active2 = False
                 
@@ -110,6 +122,9 @@ def naming(screen):
             color2 = (185,15,18) if active2 else settings.GRAY
 
         
+        if backButtonRect.collidepoint(py.mouse.get_pos()):
+            multiplier = 1.2
+
         screen.fill(settings.black)
         screen.blit(bg, (0,0))
         screen.blit(p1, (100, 100))
@@ -130,6 +145,10 @@ def naming(screen):
         py.draw.rect(screen, settings.WHITE, input_box2, border_radius=15)
         py.draw.rect(screen, color2, input_box2, 5, border_radius=15)
         screen.blit(p2_textSurface, (input_box2.x+10, input_box2.y+8))
+        backButton = py.transform.scale_by(backButtonInit, multiplier)
+        backButtonRect = backButton.get_rect()
+        backButtonRect.center = (100+w/2, settings.height-100-h/2)
+        screen.blit(backButton, backButtonRect)
 
         if (done == [True, True]):
             screen.blit(dim_surface, (0, 0))
