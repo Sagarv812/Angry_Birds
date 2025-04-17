@@ -5,6 +5,7 @@ import Modules.settings as settings
 import Modules.loading_screen as load
 import Modules.player_names as Players
 import Main_Menu as menu
+import Modules.bird_select as selection
 import random
 
 pygame.init()
@@ -20,7 +21,7 @@ pygame.display.set_caption("ANGRY BIRDS")
 # birdrect = red.get_rect()
 # birdrect.topleft = (500,500)
 
-# clock = pygame.time.Clock()
+clock = pygame.time.Clock()
 
 while True:
 
@@ -30,7 +31,12 @@ while True:
         menu.menu(screen)
     elif settings.state == "naming":
         Players.naming(screen)
+    elif settings.state == "select": 
+        for i in range(1,3):
+            selection.chooseBird(screen, i)
+            if settings.state == "naming":
+                break
+    else:
+        break
 
-print("Player 1: ", settings.player1)
-print("Player 2: ", settings.player2)
 

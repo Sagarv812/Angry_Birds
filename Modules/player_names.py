@@ -1,5 +1,6 @@
 import pygame as py, sys
 import Modules.settings as settings
+import Modules.players as Players
 
 def naming(screen):
     p1 = settings.bigFont.render("PLAYER 1", True, (0,0,0))
@@ -71,8 +72,8 @@ def naming(screen):
                         active2 = True
                         active1 = False
                     elif backButtonRect.collidepoint(event.pos):
-                        settings.player1 = "Player 1"
-                        settings.player2 = "Player 2"
+                        Players.Player1["name"] = "Player 1"
+                        Players.Player2["name"] = "Player 2"
                         settings.state = "menu"
                         return
                     else:
@@ -80,6 +81,7 @@ def naming(screen):
                 
                 else:
                     if next.collidepoint(event.pos):
+                        settings.state = "select"
                         return
                     elif back.collidepoint(event.pos):
                         done = [False, False]
@@ -89,7 +91,7 @@ def naming(screen):
                 if active1:
                     if event.key == py.K_RETURN:
                         active1 = False
-                        settings.player1 = text1.strip().upper()
+                        Players.Player1["name"] = text1.strip().upper()
                         if (text1 != ""):
                             done[0] = True
                     elif event.key == py.K_BACKSPACE:
@@ -99,7 +101,7 @@ def naming(screen):
                     elif event.key == py.K_TAB:
                         active1 = False
                         active2 = True
-                        settings.player1 = text1.strip().upper()
+                        Players.Player1["name"] = text1.strip().upper()
                         if (text1 != ""):
                             done[0] = True
                     else:
@@ -108,7 +110,7 @@ def naming(screen):
                 elif active2:
                     if event.key == py.K_RETURN:
                         active2 = False
-                        settings.player2 = text2.strip().upper()
+                        Players.Player2["name"] = text2.strip().upper()
                         if (text2 != ""):
                             done[1] = True
                     elif event.key == py.K_BACKSPACE:
