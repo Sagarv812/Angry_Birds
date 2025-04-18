@@ -72,8 +72,8 @@ def naming(screen):
                         active2 = True
                         active1 = False
                     elif backButtonRect.collidepoint(event.pos):
-                        Players.Player1["name"] = "Player 1"
-                        Players.Player2["name"] = "Player 2"
+                        Players.Player1.changeName("Player 1")
+                        Players.Player2.changeName("Player 2")
                         settings.state = "menu"
                         return
                     else:
@@ -91,7 +91,7 @@ def naming(screen):
                 if active1:
                     if event.key == py.K_RETURN:
                         active1 = False
-                        Players.Player1["name"] = text1.strip().upper()
+                        Players.Player1.changeName(text1.strip().upper())
                         if (text1 != ""):
                             done[0] = True
                     elif event.key == py.K_BACKSPACE:
@@ -101,7 +101,7 @@ def naming(screen):
                     elif event.key == py.K_TAB:
                         active1 = False
                         active2 = True
-                        Players.Player1["name"] = text1.strip().upper()
+                        Players.Player1.changeName(text1.strip().upper())
                         if (text1 != ""):
                             done[0] = True
                     else:
@@ -110,7 +110,7 @@ def naming(screen):
                 elif active2:
                     if event.key == py.K_RETURN:
                         active2 = False
-                        Players.Player2["name"] = text2.strip().upper()
+                        Players.Player2.changeName(text2.strip().upper())
                         if (text2 != ""):
                             done[1] = True
                     elif event.key == py.K_BACKSPACE:
@@ -187,7 +187,6 @@ def naming(screen):
             py.draw.rect(screen, settings.RED, back, border_radius=15)
             screen.blit(nextText, nextText_rect)
             screen.blit(backText, backText_rect)
-
 
 
         py.display.flip()

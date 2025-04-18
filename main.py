@@ -6,6 +6,8 @@ import Modules.loading_screen as load
 import Modules.player_names as Players
 import Main_Menu as menu
 import Modules.bird_select as selection
+import Modules.players as People
+import Modules.play as Play
 import random
 
 pygame.init()
@@ -36,7 +38,11 @@ while True:
             selection.chooseBird(screen, i)
             if settings.state == "naming":
                 break
+    elif settings.state == "play":
+        Play.playGame()
     else:
+        print(People.Player1.birds)
+        print(People.Player2.birds)
         break
 
 

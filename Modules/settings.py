@@ -49,6 +49,9 @@ STONE = [
     pygame.image.load("Media/Blocks/stone_3.png")
 ]
 
+
+
+
 def ScaleImage(image):
     return pygame.transform.scale(image,(50,50))
 
