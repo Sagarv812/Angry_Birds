@@ -42,7 +42,7 @@ def naming(screen):
     active2 = False
     done = [False, False]
 
-    dim_surface = py.Surface((settings.width, settings.height), py.SRCALPHA)
+    dim_surface = py.Surface((screen.get_size()), py.SRCALPHA)
     dim_surface.fill((0, 0, 0, 180))
 
     popup = py.Rect(10, 10, 800, 400)

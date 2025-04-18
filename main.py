@@ -39,7 +39,7 @@ while True:
             if settings.state == "naming":
                 break
     elif settings.state == "play":
-        Play.playGame()
+        Play.playGame(screen)
     else:
         print(People.Player1.birds)
         print(People.Player2.birds)

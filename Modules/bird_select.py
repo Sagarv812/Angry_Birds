@@ -68,7 +68,7 @@ def chooseBird(screen, pNo):
     tick_rect = tick.get_rect()
     stellaSelect = False
 
-    dim_surface = py.Surface((settings.width, settings.height), py.SRCALPHA)
+    dim_surface = py.Surface(screen.get_size(), py.SRCALPHA)
     dim_surface.fill((0, 0, 0, 180))
 
     wood = py.transform.scale_by(settings.WOOD[0], 0.25)
@@ -193,7 +193,7 @@ def chooseBird(screen, pNo):
         birdRects = [red_rect, chuck_rect, bomb_rect, blue_rect, stella_rect]
 
         screen.fill(settings.black)
-        screen.blit(settings.bg, (0,0))
+        screen.blit(py.transform.scale(settings.bg, screen.get_size()), (0,0))
         py.draw.rect(screen, settings.YELLOW, box, border_radius=15)
         screen.blit(playerName, playerName_rect)
         screen.blit(instructions1, instructions1_rect)
