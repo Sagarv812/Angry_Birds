@@ -2,7 +2,7 @@ import pygame, sys, time
 
 pygame.init()
 
-g = 9.81 #acceleration due to gravity
+g = 9.8 #acceleration due to gravity
 scale = 50 #scale: 50 pixels is 1 meter
 
 #template(old pixel count, time b/w two frames in milliseconds, speed in pixels/s)

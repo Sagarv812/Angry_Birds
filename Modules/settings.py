@@ -17,7 +17,8 @@ PINK = (245, 174, 183)
 WOOD_BROWN = (193,107,30)
 STONE_GRAY = (161,153,140)
 ICE_BLUE = (119,209,244)
-state = "select"
+DARK_GRAY = (31,31,31)
+state = "load"
 
 clock = pygame.time.Clock()
 

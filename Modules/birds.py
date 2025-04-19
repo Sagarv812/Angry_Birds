@@ -31,6 +31,9 @@ class Birds:
     def getImage(self):
         return self.image
     
+    def getHighlightImage(self):
+        return self.highlightImage
+    
     
     # g = 9.8 #acceleration due to gravity
     # scale = 50 #scale: 50 pixels is 1 meter
