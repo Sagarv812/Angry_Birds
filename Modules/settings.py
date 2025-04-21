@@ -18,7 +18,9 @@ WOOD_BROWN = (193,107,30)
 STONE_GRAY = (161,153,140)
 ICE_BLUE = (119,209,244)
 DARK_GRAY = (31,31,31)
-state = "load"
+ROPE_BROWN = (48,22,8)
+state = "select"
+winner = None
 
 clock = pygame.time.Clock()
 

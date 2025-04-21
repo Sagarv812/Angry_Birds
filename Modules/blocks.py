@@ -16,14 +16,23 @@ class Block:
     
     def returnImg(self):
         if self.health>40:
+            self.rect = self.img1.get_rect()
             return self.img1
         elif self.health>20:
+            self.rect = self.img2.get_rect()
             return self.img2
         elif self.health>0:
+            self.rect = self.img3.get_rect()
             return self.img3
+        else:
+            return None
         
     def getName(self):
         return self.name
+    
+    def clone(self):
+        return Block(self.name, self.health,self.img1,self.img2,self.img3)
+    
         
 wood = Block("wood",60,scaler(settings.WOOD[0]),scaler(settings.WOOD[1]),scaler(settings.WOOD[2]))
 ice = Block("ice",60,scaler(settings.ICE[0]),scaler(settings.ICE[1]),scaler(settings.ICE[2]))
