@@ -35,6 +35,8 @@ class Birds:
         self.ifDragging = False
         self.velocity = py.Vector2(0,0)
         self.startTime = 0
+        self.bounceTime = 0
+        self.ifBounced = False
 
     def changeAffinity(self, newAffinity):
         self.affinity = newAffinity
@@ -103,8 +105,24 @@ class Birds:
             elif self.ifLaunched:
                 scale = 20
                 t = (py.time.get_ticks()-self.startTime)/1000
+                # print("before if: ",self.rect)
+                
                 self.rect.centerx = self.initRect.centerx + self.velocity[0]*t*scale
-                self.rect.centery = self.initRect.centery + (self.velocity[1]*t + 0.5*g*(t**2))*scale
+                self.rect.centery = self.initRect.centery + (self.velocity[1]*(t-self.bounceTime) + 0.5*g*((t-self.bounceTime)**2))*scale
+                # print(self.rect)
+                # print("y velocity = ", self.velocity[1])
+                if self.rect.bottom >= 930 and not self.ifBounced and t>=0.2:
+                    self.velocity[1] = -(self.velocity[1]+g*(t-self.bounceTime))*0.5
+                    self.bounceTime = (py.time.get_ticks()-self.startTime)/1000
+                    self.initRect.centery = self.rect.centery
+                    self.ifBounced = True
+                    
+                    # print(self.velTracker)
+                    # print(self.velocity)
+                    # print()
+                else:
+                    self.ifBounced = False
+                
             else:
                 self.rect.centerx = transformX(sling_rect.centerx+15-self.image.get_width()/2,playerNo)
                 self.rect.bottom = sling_rect.centery-30

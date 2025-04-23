@@ -9,6 +9,13 @@ import math
 import numpy as np
 
 
+def scaleRect(rect):
+    newRect = rect.copy()
+    center = rect.center
+    newRect.width = int(rect.width*0.9)
+    newRect.height = int(rect.height*0.9)
+    newRect.center = center
+    return newRect
 
 def drawTrajectory(screen, bird, slingCenter, start):
     g = 20
@@ -66,7 +73,7 @@ def displayAvatar(screen, birdNos1, birds1, birdNos2, birds2, active=None):
     screen.blit(avatar1, avatar1_rect)
     screen.blit(avatar2, avatar2_rect)
 
-def displayScore(screen, score1, score2, turn=None):
+def displayScore(screen, score1, score2, turn=None, ifAdding=False):
     multiplier = [1,1]
     if turn is not None:
         multiplier[turn-1] = 1.3
@@ -80,8 +87,9 @@ def displayScore(screen, score1, score2, turn=None):
     score2_rect.topleft = (settings.width/2+100,50)
     sep_rect = sep.get_rect(center=((score1_rect.right+score2_rect.left)/2,100))
     screen.blit(sep, sep_rect)
-    screen.blit(score1, score1_rect)
-    screen.blit(score2, score2_rect)
+    if(not ifAdding):
+        screen.blit(score1, score1_rect)
+        screen.blit(score2, score2_rect)
 
 def transformX(x, playerNo):
     return x if playerNo==1 else settings.width-x
@@ -97,18 +105,18 @@ def rotateBirds(birdNos, birdsPlay):
     birdNos[0] = -1
     birdsPlay[0] = None
 
-    print("Rotation")
-    for i in range(4):
-        if birdNos[i]==-1: continue
-        else:
-            print(birdsPlay[i].affinity)
+    # print("Rotation")
+    # for i in range(4):
+    #     if birdNos[i]==-1: continue
+    #     else:
+    #         print(birdsPlay[i].affinity)
         
 def displayBirds(screen, playerNo, birdNos, sling_rect, birdsPlay):
-    print("player no = ",playerNo)
+    # print("player no = ",playerNo)
     sling_rect_trans = copy.deepcopy(sling_rect)
     sling_rect_trans.centerx = transformX(sling_rect.centerx, playerNo)
-    print("sling 1 rect",sling_rect)
-    print("sling 2 rect ", sling_rect_trans)
+    # print("sling 1 rect",sling_rect)
+    # print("sling 2 rect ", sling_rect_trans)
 
     sling2 = rotateImg(py.transform.scale_by(py.image.load("Media/sling(2).png"),0.8),playerNo)
     sling2_rect = sling2.get_rect()
@@ -167,9 +175,11 @@ def displayBlocks(screen, blocks, playerNo):
                     block_rect.centery = int(930-block.get_width()/2-90*i)
                     screen.blit(block,block_rect)
 
-    
+
 
 def playGame(screen):
+
+    clock = py.time.Clock()
 
     startTime = py.time.get_ticks()
     state = "static"
@@ -185,7 +195,8 @@ def playGame(screen):
     # start_size = 3000
     # end_size = 200
     duration = 1
-
+    scoreTime = 0
+    score = 0
     py.mixer.music.stop()
     # py.mixer.music.load("Media/audio/battle_music.mp3")
     # py.mixer.music.play(-1)
@@ -210,7 +221,6 @@ def playGame(screen):
 
     #Blocks
     blockKeys = np.random.randint(0, 3, size=(4,2))
-    blockKeys = np.array([[2,2],[2,2],[2,2],[2,2],[2,2]])
     blocks1 = np.empty_like(blockKeys, dtype=object)
     blocks2 = np.empty_like(blockKeys, dtype=object)
     for i in range(4):
@@ -302,6 +312,11 @@ def playGame(screen):
                 state = "player1"
 
         elif state == "player1":
+            if Players.Player1.score >= 480:
+                settings.state = "winner"
+                settings.winner = Players.Player2.name
+                return
+            
             displayBirds(screen,1,birdNos1,sling_rect,birdsPlay1)
 
             displayAvatar(screen, birdNos1, birds1, birdNos2, birds2,1)
@@ -317,16 +332,25 @@ def playGame(screen):
                         break
                     for j in range(2):
                         if blocks1[i][j] is not None:
-                            if birdsPlay1[3].rect.colliderect(blocks1[i][j].rect):
+                            if (scaleRect(birdsPlay1[3].rect)).colliderect(blocks1[i][j].rect):
                                 py.draw.rect(screen,settings.black,blocks1[i][j].rect,width=20)
-                                time.sleep(1)
                                 birdsPlay1[3].ifCollided = True
                                 if birdsPlay1[3].affinity == blocks1[i][j].name:
-                                    blocks1[i][j].health -= birdsPlay1[3].damageMultiplier*20
-                                    Players.Player1.score += int(birdsPlay1[3].damageMultiplier*20)
+                                    score = int(birdsPlay1[3].damageMultiplier*20)
                                 else:
-                                    blocks1[i][j].health -= 20/birdsPlay1[3].damageMultiplier
-                                    Players.Player1.score += int(20/birdsPlay1[3].damageMultiplier)
+                                    score = int(20/birdsPlay1[3].damageMultiplier)
+                                
+                                score = min(score,blocks1[i][j].health)
+
+                                blocks1[i][j].health -= score
+                                Players.Player1.score += score
+                                
+                                state = "p1score"
+                                # Players.Player1.score += score
+                                # scoreDisplay = settings.bigFont.render(str(score),True,settings.YELLOW,settings.RED)
+                                # scoreDisplayRect = scoreDisplay.get_rect(center=(settings.width/2,settings.height/2))
+                                # screen.blit(scoreDisplay,scoreDisplayRect)
+                                scoreTime = py.time.get_ticks()/1000
 
                                 if blocks1[i][j].health<=0:
                                     if i<=2 and blocks1[i+1][j] is not None:
@@ -343,28 +367,30 @@ def playGame(screen):
                                 break
 
                 if birdsPlay1[3].ifCollided:
-                    print("1 calling rot")
-                    print("Before rotation:")
-                    for i in range(4):
-                        print("Bird",i)
-                        if birdsPlay1[i] is None: continue
-                        else:
-                            birdsPlay1[i].printInfo()
+                    # print("1 calling rot")
+                    # print("Before rotation:")
+                    # for i in range(4):
+                    #     # print("Bird",i)
+                    #     if birdsPlay1[i] is None: continue
+                    #     else:
+                    #         birdsPlay1[i].printInfo()
                     rotateBirds(birdNos1,birdsPlay1)
-                    print("After rotation:")
-                    for i in range(4):
-                        print("Bird",i)
-                        if birdsPlay1[i] is None: continue
-                        else:
-                            birdsPlay1[i].printInfo()
+                    # print("After rotation:")
+                    # for i in range(4):
+                    #     print("Bird",i)
+                    #     if birdsPlay1[i] is None: continue
+                    #     else:
+                    #         birdsPlay1[i].printInfo()
 
-                    if Players.Player1.score >= 480:
-                        settings.state = "winner"
-                        settings.winner = "player1"
-                    state = "player2"
+                    
+                    # state = "player2"
 
 
         elif state == "player2":
+            if Players.Player1.score >= 480:
+                settings.state = "winner"
+                settings.winner = Players.Player1.name
+                return
             displayBirds(screen,2,birdNos2,sling_rect,birdsPlay2)
 
             displayAvatar(screen, birdNos1, birds1, birdNos2, birds2,2)
@@ -375,22 +401,24 @@ def playGame(screen):
             displayBlocks(screen, blocks2,1)
 
             if birdsPlay2[3].ifLaunched:
-                print("launched ig")
+                # print("launched ig")
                 for i in range(4):
                     if birdsPlay2[3].ifCollided:
                         break
                     for j in range(2):
                         if blocks2[i][j] is not None:
-                            if birdsPlay2[3].rect.colliderect(blocks2[i][j].rect):
+                            if scaleRect(birdsPlay2[3].rect).colliderect(blocks2[i][j].rect):
                                 py.draw.rect(screen,settings.black,blocks2[i][j].rect)
-                                time.sleep(1)
                                 birdsPlay2[3].ifCollided = True
                                 if birdsPlay2[3].affinity == blocks2[i][j].name:
-                                    blocks2[i][j].health -= birdsPlay2[3].damageMultiplier*20
-                                    Players.Player2.score += int(birdsPlay2[3].damageMultiplier*20)
+                                    score = int(birdsPlay2[3].damageMultiplier*20)
                                 else:
-                                    blocks2[i][j].health -= 20/birdsPlay2[3].damageMultiplier
-                                    Players.Player2.score += int(20/birdsPlay2[3].damageMultiplier)
+                                    score = int(20/birdsPlay2[3].damageMultiplier)
+
+                                score = min(score, blocks2[i][j].health)
+
+                                blocks2[i][j].health -= score
+                                Players.Player2.score += score
 
                                 if blocks2[i][j].health<=0:
                                     if i<=2 and blocks2[i+1][j] is not None:
@@ -407,19 +435,19 @@ def playGame(screen):
 
                 if birdsPlay2[3].ifCollided:     
                     if any(x != -1 for x in birdNos1):
-                        print("2 calling rot")
-                        print("Before rotation:")
-                        for i in range(4):
-                            print("Bird",i)
-                            if birdsPlay2[i] is None: continue
-                            else:
-                                birdsPlay2[i].printInfo()
+                        # print("2 calling rot")
+                        # print("Before rotation:")
+                        # for i in range(4):
+                        #     # print("Bird",i)
+                        #     if birdsPlay2[i] is None: continue
+                        #     else:
+                        #         birdsPlay2[i].printInfo()
                         rotateBirds(birdNos2,birdsPlay2)
-                        for i in range(4):
-                            print("Bird",i)
-                            if birdsPlay2[i] is None: continue
-                            else:
-                                birdsPlay2[i].printInfo()
+                        # for i in range(4):
+                        #     print("Bird",i)
+                        #     if birdsPlay2[i] is None: continue
+                        #     else:
+                        #         birdsPlay2[i].printInfo()
                         state = "player1"
                     else:
                         birdNos1 = [random.randint(0,Players.Player1.getBirdsNo()-1) for _ in range(4)] #Initializing birds
@@ -429,6 +457,43 @@ def playGame(screen):
                         birdsPlay2 = [birds2[x].clone() for x in birdNos2]
 
                         state = "player1"
+                    state = "p2score"
+                    scoreTime = py.time.get_ticks()/1000
+
+
+        elif state == "p1score":
+            t = py.time.get_ticks()/1000-scoreTime
+            if t >= 1:
+                # time.sleep(1)
+                state = "player2"
+            displayScore(screen, score1, score2, ifAdding=True)
+            displayAvatar(screen, birdNos1, birds1, birdNos2,birds2)
+            displayBlocks(screen, blocks1, 2)
+            dim_surface = py.Surface(screen.get_size(), py.SRCALPHA)
+            dim_surface.fill((0, 0, 0, 200))
+            screen.blit(dim_surface,(0,0))
+            scoreDisplay = settings.bigFont.render("+"+str(score),True,settings.YELLOW)
+            scoreDisplay = py.transform.scale_by(scoreDisplay,2-t**2)
+            scoreDisplayRect = scoreDisplay.get_rect(center=(settings.width/2+(806-settings.width/2)*(t**2),(settings.height/2+(108-settings.height/2)*(t**2))))
+            screen.blit(scoreDisplay,scoreDisplayRect)
+            
+
+        elif state == "p2score":
+            t = py.time.get_ticks()/1000-scoreTime
+            if t >= 1:
+                # time.sleep(1)
+                state = "player1"
+            displayScore(screen, score1, score2, ifAdding=True)
+            displayAvatar(screen, birdNos1, birds1, birdNos2,birds2)
+            displayBlocks(screen, blocks2, 1)
+            dim_surface = py.Surface(screen.get_size(), py.SRCALPHA)
+            dim_surface.fill((0, 0, 0, 200))
+            screen.blit(dim_surface,(0,0))
+            scoreDisplay = settings.bigFont.render("+"+str(score),True,settings.RED)
+            scoreDisplay = py.transform.scale_by(scoreDisplay,2-t**2)
+            scoreDisplayRect = scoreDisplay.get_rect(center=(settings.width/2+(1090-settings.width/2)*(t**2),settings.height/2+(108-settings.height/2)*(t**2)))
+            screen.blit(scoreDisplay,scoreDisplayRect)
+            
 
 
 
@@ -439,7 +504,7 @@ def playGame(screen):
             dim_surface.fill((0, 0, 0, 180))
             screen.blit(dim_surface,(0,0))
 
-        
+        clock.tick_busy_loop(60)
         py.display.flip()
         
 
