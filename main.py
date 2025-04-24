@@ -8,6 +8,7 @@ import Main_Menu as menu
 import Modules.bird_select as selection
 import Modules.players as People
 import Modules.play as Play
+import Modules.winner as Winner
 import random
 
 pygame.init()
@@ -26,6 +27,7 @@ pygame.display.set_caption("ANGRY BIRDS")
 clock = pygame.time.Clock()
 
 while True:
+    settings.width, settings.height = screen.get_size()
 
     if settings.state == "load":
         load.loadScreen(screen)
@@ -41,6 +43,7 @@ while True:
     elif settings.state == "play":
         Play.playGame(screen)
     else:
+        Winner.winnerAnimation(screen)
         print(People.Player1.birds)
         print(People.Player2.birds)
         break

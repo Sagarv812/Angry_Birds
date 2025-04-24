@@ -19,8 +19,9 @@ STONE_GRAY = (161,153,140)
 ICE_BLUE = (119,209,244)
 DARK_GRAY = (31,31,31)
 ROPE_BROWN = (48,22,8)
-state = "select"
-winner = None
+state = "winner"
+winner = "PLAYER1"
+pauseTime = 0
 
 clock = pygame.time.Clock()
 
@@ -35,9 +36,11 @@ blue = pygame.image.load("Media/Birds/blue1.png")
 stella = pygame.image.load("Media/Birds/stella1.png")
 
 WOOD = [
-    pygame.image.load("Media/Blocks/wood_1.png"),
-    pygame.image.load("Media/Blocks/wood_2.png"),
-    pygame.image.load("Media/Blocks/wood_3.png")
+    pygame.image.load("Media/Blocks/wood1.png"),
+    pygame.image.load("Media/Blocks/wood2.png"),
+    pygame.image.load("Media/Blocks/wood3.png"),
+    pygame.image.load("Media/Blocks/wood4.png"),
+    pygame.image.load("Media/Blocks/wood5.png")
 ]
 
 ICE = [

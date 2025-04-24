@@ -36,7 +36,9 @@ class Birds:
         self.velocity = py.Vector2(0,0)
         self.startTime = 0
         self.bounceTime = 0
+        self.collideTime = 0
         self.ifBounced = False
+        self.ifCollideTop = False
 
     def changeAffinity(self, newAffinity):
         self.affinity = newAffinity
@@ -82,10 +84,11 @@ class Birds:
         slingCenter = py.Vector2(self.initRect.center)
         birdCenter = py.Vector2(self.rect.center)
         self.velocity = (slingCenter-birdCenter)*0.2*(self.speed**0.2)
+        self.changeVelocity = copy.copy(self.velocity)
         self.initRect = self.rect   
 
     #template(old pixel count, time b/w two frames in milliseconds, speed in pixels/s)
-    def updatePos(self, birdNo, playerNo, sling_rect, screen):
+    def updatePos(self, birdNo, playerNo, sling_rect, collidedBlockRect=None):
         g = 20
         # sling_rect_trans = copy.copy(sling_rect)
         # sling_rect_trans.x = transformX(sling_rect.x,playerNo)
@@ -102,26 +105,30 @@ class Birds:
                     point2 = py.Vector2(self.rect.center)
 
                 # self.drawTrajectory(point1, point2, screen)
-            elif self.ifLaunched:
+            elif self.ifLaunched or self.ifCollided:
                 scale = 20
                 t = (py.time.get_ticks()-self.startTime)/1000
                 # print("before if: ",self.rect)
-                
-                self.rect.centerx = self.initRect.centerx + self.velocity[0]*t*scale
+                self.changeVelocity[1] += g/60
+                self.rect.centerx = self.initRect.centerx + self.velocity[0]*(t-self.collideTime)*scale
                 self.rect.centery = self.initRect.centery + (self.velocity[1]*(t-self.bounceTime) + 0.5*g*((t-self.bounceTime)**2))*scale
                 # print(self.rect)
                 # print("y velocity = ", self.velocity[1])
-                if self.rect.bottom >= 930 and not self.ifBounced and t>=0.2:
+                if (self.rect.bottom >= 930 and not self.ifBounced and t>=0.2) or self.ifCollideTop:
                     self.velocity[1] = -(self.velocity[1]+g*(t-self.bounceTime))*0.5
+                    self.changeVelocity[1] = -(self.velocity[1]+g*(t-self.bounceTime))*0.5
                     self.bounceTime = (py.time.get_ticks()-self.startTime)/1000
                     self.initRect.centery = self.rect.centery
                     self.ifBounced = True
+                    self.ifCollideTop = False
                     
                     # print(self.velTracker)
                     # print(self.velocity)
                     # print()
                 else:
                     self.ifBounced = False
+                
+                
                 
             else:
                 self.rect.centerx = transformX(sling_rect.centerx+15-self.image.get_width()/2,playerNo)

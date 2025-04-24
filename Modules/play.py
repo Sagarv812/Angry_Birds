@@ -9,6 +9,12 @@ import math
 import numpy as np
 
 
+def checkBounds(birdRect):
+    if birdRect.centerx > settings.width or birdRect.centerx<0 or birdRect.centery<-100:
+        return True
+    else:
+        return False
+
 def scaleRect(rect):
     newRect = rect.copy()
     center = rect.center
@@ -42,14 +48,12 @@ def displayAvatar(screen, birdNos1, birds1, birdNos2, birds2, active=None):
     if any(x != -1 for x in birdNos1):  
         avatar1 = birds1[birdNos1[3]].getAvatarImage()
     else:
-        avatar1 = py.image.load("Media/avatar1.png")
-        avatar1 = py.transform.scale_by(avatar1, 0.5)
+        avatar1 = birds1[0].getAvatarImage()
 
     if any(x != -1 for x in birdNos2):
         avatar2 = py.transform.flip(birds2[birdNos2[3]].getAvatarImage(),True,False)
     else:
-        avatar2 = py.image.load("Media/avatar2.png")
-        avatar2 = py.transform.scale_by(avatar2, 0.5)
+        avatar2 = py.transform.flip(birds2[0].getAvatarImage(),True,False)
 
     avatar1_rect = avatar1.get_rect()
     avatar2_rect = avatar2.get_rect()
@@ -242,6 +246,7 @@ def playGame(screen):
             if event.type == py.QUIT: sys.exit()
             elif event.type == py.KEYDOWN:
                 if event.key == py.K_ESCAPE:
+                    py.image.save(screen, "screenshot.png")
                     if state != "pause":
                         prevState = state
                         state = "pause"
@@ -327,13 +332,29 @@ def playGame(screen):
 
 
             if birdsPlay1[3].ifLaunched:
+                if checkBounds(birdsPlay1[3].rect) or (birdsPlay1[3].changeVelocity.magnitude()<20 and birdsPlay1[3].rect.bottom>920):
+                    score = 0
+                    state = "p1score"
+                    # print(state)
+                    scoreTime = py.time.get_ticks()/1000
+                    # print("quitting life")
+                    continue
                 for i in range(4):
                     if birdsPlay1[3].ifCollided:
                         break
                     for j in range(2):
                         if blocks1[i][j] is not None:
                             if (scaleRect(birdsPlay1[3].rect)).colliderect(blocks1[i][j].rect):
-                                py.draw.rect(screen,settings.black,blocks1[i][j].rect,width=20)
+
+                                if birdsPlay1[3].rect.centerx<=(blocks1[i][j].rect.left):
+                                    birdsPlay1[3].collideTime = (py.time.get_ticks()-birdsPlay1[3].startTime)/1000
+                                    birdsPlay1[3].velocity[0] = -birdsPlay1[3].velocity[0]*0.5
+                                    birdsPlay1[3].initRect.centerx = birdsPlay1[3].rect.centerx
+                                elif birdsPlay1[3].rect.centery<=(blocks1[i][j].rect.top):
+                                    birdsPlay1[3].ifCollideTop = True
+                                    birdsPlay1[3].updatePos(3,1,sling_rect)
+
+                                py.draw.rect(screen,settings.WHITE,blocks1[i][j].rect,width=20)
                                 birdsPlay1[3].ifCollided = True
                                 if birdsPlay1[3].affinity == blocks1[i][j].name:
                                     score = int(birdsPlay1[3].damageMultiplier*20)
@@ -366,7 +387,7 @@ def playGame(screen):
 
                                 break
 
-                if birdsPlay1[3].ifCollided:
+                # if birdsPlay1[3].ifCollided:
                     # print("1 calling rot")
                     # print("Before rotation:")
                     # for i in range(4):
@@ -374,7 +395,7 @@ def playGame(screen):
                     #     if birdsPlay1[i] is None: continue
                     #     else:
                     #         birdsPlay1[i].printInfo()
-                    rotateBirds(birdNos1,birdsPlay1)
+                    # rotateBirds(birdNos1,birdsPlay1)
                     # print("After rotation:")
                     # for i in range(4):
                     #     print("Bird",i)
@@ -401,6 +422,13 @@ def playGame(screen):
             displayBlocks(screen, blocks2,1)
 
             if birdsPlay2[3].ifLaunched:
+                if checkBounds(birdsPlay2[3].rect) or (birdsPlay2[3].changeVelocity.magnitude()<20 and birdsPlay2[3].rect.bottom>920):
+                    score = 0
+                    state = "p2score"
+                    # print(state)
+                    scoreTime = py.time.get_ticks()/1000
+                    # print("quitting life")
+                    continue
                 # print("launched ig")
                 for i in range(4):
                     if birdsPlay2[3].ifCollided:
@@ -408,7 +436,16 @@ def playGame(screen):
                     for j in range(2):
                         if blocks2[i][j] is not None:
                             if scaleRect(birdsPlay2[3].rect).colliderect(blocks2[i][j].rect):
-                                py.draw.rect(screen,settings.black,blocks2[i][j].rect)
+                                
+                                if birdsPlay2[3].rect.centerx>=(blocks2[i][j].rect.right):
+                                    birdsPlay2[3].collideTime = (py.time.get_ticks()-birdsPlay2[3].startTime)/1000
+                                    birdsPlay2[3].velocity[0] = -birdsPlay2[3].velocity[0]*0.5
+                                    birdsPlay2[3].initRect.centerx = birdsPlay2[3].rect.centerx
+                                elif birdsPlay2[3].rect.centery<=(blocks2[i][j].rect.top):
+                                    birdsPlay2[3].ifCollideTop = True
+                                    birdsPlay2[3].updatePos(3,1,sling_rect)
+
+                                py.draw.rect(screen,settings.WHITE,blocks2[i][j].rect)
                                 birdsPlay2[3].ifCollided = True
                                 if birdsPlay2[3].affinity == blocks2[i][j].name:
                                     score = int(birdsPlay2[3].damageMultiplier*20)
@@ -434,29 +471,7 @@ def playGame(screen):
                                 break
 
                 if birdsPlay2[3].ifCollided:     
-                    if any(x != -1 for x in birdNos1):
-                        # print("2 calling rot")
-                        # print("Before rotation:")
-                        # for i in range(4):
-                        #     # print("Bird",i)
-                        #     if birdsPlay2[i] is None: continue
-                        #     else:
-                        #         birdsPlay2[i].printInfo()
-                        rotateBirds(birdNos2,birdsPlay2)
-                        # for i in range(4):
-                        #     print("Bird",i)
-                        #     if birdsPlay2[i] is None: continue
-                        #     else:
-                        #         birdsPlay2[i].printInfo()
-                        state = "player1"
-                    else:
-                        birdNos1 = [random.randint(0,Players.Player1.getBirdsNo()-1) for _ in range(4)] #Initializing birds
-                        birdsPlay1 = [birds1[x].clone() for x in birdNos1]
-
-                        birdNos2 = [random.randint(0,Players.Player2.getBirdsNo()-1) for _ in range(4)]
-                        birdsPlay2 = [birds2[x].clone() for x in birdNos2]
-
-                        state = "player1"
+                    
                     state = "p2score"
                     scoreTime = py.time.get_ticks()/1000
 
@@ -464,11 +479,13 @@ def playGame(screen):
         elif state == "p1score":
             t = py.time.get_ticks()/1000-scoreTime
             if t >= 1:
+                rotateBirds(birdNos1,birdsPlay1)
                 # time.sleep(1)
                 state = "player2"
             displayScore(screen, score1, score2, ifAdding=True)
             displayAvatar(screen, birdNos1, birds1, birdNos2,birds2)
             displayBlocks(screen, blocks1, 2)
+            displayBirds(screen, 1, birdNos1, sling_rect, birdsPlay1)
             dim_surface = py.Surface(screen.get_size(), py.SRCALPHA)
             dim_surface.fill((0, 0, 0, 200))
             screen.blit(dim_surface,(0,0))
@@ -481,11 +498,35 @@ def playGame(screen):
         elif state == "p2score":
             t = py.time.get_ticks()/1000-scoreTime
             if t >= 1:
+                if any(x != -1 for x in birdNos1):
+                    # print("2 calling rot")
+                    # print("Before rotation:")
+                    # for i in range(4):
+                    #     # print("Bird",i)
+                    #     if birdsPlay2[i] is None: continue
+                    #     else:
+                    #         birdsPlay2[i].printInfo()
+                    rotateBirds(birdNos2,birdsPlay2)
+                    # for i in range(4):
+                    #     print("Bird",i)
+                    #     if birdsPlay2[i] is None: continue
+                    #     else:
+                    #         birdsPlay2[i].printInfo()
+                    state = "player1"
+                else:
+                    birdNos1 = [random.randint(0,Players.Player1.getBirdsNo()-1) for _ in range(4)] #Initializing birds
+                    birdsPlay1 = [birds1[x].clone() for x in birdNos1]
+
+                    birdNos2 = [random.randint(0,Players.Player2.getBirdsNo()-1) for _ in range(4)]
+                    birdsPlay2 = [birds2[x].clone() for x in birdNos2]
+
+                    state = "player1"
                 # time.sleep(1)
                 state = "player1"
             displayScore(screen, score1, score2, ifAdding=True)
             displayAvatar(screen, birdNos1, birds1, birdNos2,birds2)
             displayBlocks(screen, blocks2, 1)
+            displayBirds(screen, 2, birdNos2, sling_rect, birdsPlay2)
             dim_surface = py.Surface(screen.get_size(), py.SRCALPHA)
             dim_surface.fill((0, 0, 0, 200))
             screen.blit(dim_surface,(0,0))
@@ -503,6 +544,14 @@ def playGame(screen):
             dim_surface = py.Surface(screen.get_size(), py.SRCALPHA)
             dim_surface.fill((0, 0, 0, 180))
             screen.blit(dim_surface,(0,0))
+            pauseMenu = py.Rect(10,10,settings.width/3,settings.height/3)
+            pauseMenu.center = (settings.width/2,settings.height/2)
+            py.draw.rect(screen, settings.RED, pauseMenu, border_radius=20)
+            pauseText = settings.bigFont.render("PAUSE",True,settings.black)
+            pauseText = py.transform.scale(pauseText, (settings.width/8,settings.height/10))
+            pauseText_rect = pauseText.get_rect()
+            pauseText_rect.center = (pauseMenu.centerx,pauseMenu.top + settings.height/17)
+            screen.blit(pauseText,pauseText_rect)
 
         clock.tick_busy_loop(60)
         py.display.flip()

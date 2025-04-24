@@ -31,8 +31,8 @@ def loadScreen(screen):
 
         screen.fill(BG_COLOR)
         inner_width = int(bar_size[0]*progress/100)
-        py.draw.rect(screen, BORDER_COLOUR, (*bar_position, *bar_size), 2)
-        py.draw.rect(screen, BAR_COLOR, (bar_position[0]+1, bar_position[1]+1, inner_width-2, bar_size[1]-2))
+        py.draw.rect(screen, BORDER_COLOUR, (*bar_position, *bar_size), 2,border_radius=15)
+        py.draw.rect(screen, BAR_COLOR, (bar_position[0]+1, bar_position[1]+1, inner_width-2, bar_size[1]-2),border_radius=15)
         screen.blit(logo, logo_rect)
 
         progress += 1
