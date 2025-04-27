@@ -4,7 +4,6 @@ import Modules.players as Players
 import Modules.settings as settings
 import Modules.blocks as Blocks
 import random
-import copy
 import math
 import numpy as np
 
@@ -117,7 +116,7 @@ def rotateBirds(birdNos, birdsPlay):
         
 def displayBirds(screen, playerNo, birdNos, sling_rect, birdsPlay):
     # print("player no = ",playerNo)
-    sling_rect_trans = copy.deepcopy(sling_rect)
+    sling_rect_trans = sling_rect.copy()
     sling_rect_trans.centerx = transformX(sling_rect.centerx, playerNo)
     # print("sling 1 rect",sling_rect)
     # print("sling 2 rect ", sling_rect_trans)
@@ -182,6 +181,7 @@ def displayBlocks(screen, blocks, playerNo):
 
 
 def playGame(screen):
+    py.mixer.music.stop()
 
     clock = py.time.Clock()
 
@@ -202,6 +202,9 @@ def playGame(screen):
     scoreTime = 0
     score = 0
     py.mixer.music.stop()
+    bgm = py.mixer.Sound("Media/audio/battle_music.mp3")
+    bgm.play(-1)
+    bgm.set_volume(settings.musicVolume/3)
     # py.mixer.music.load("Media/audio/battle_music.mp3")
     # py.mixer.music.play(-1)
     # py.mixer.music.set_volume(0.2)
@@ -238,15 +241,45 @@ def playGame(screen):
 
         print()
         
+    slider_width = settings.width/5
+    slider_height = settings.height/20
+    handler_x = settings.width/2 - slider_width/2 + settings.width/12
+    slider_y = 0
+    slider_x = handler_x
+    dragging = False
 
-   
+    slider_width2 = settings.width/5
+    slider_height2 = settings.height/20
+    handler_x2 = settings.width/2 - slider_width2/2 + settings.width/12
+    slider_y2 = 0
+    slider_x2 = handler_x2
+    dragging2 = False
+    print(handler_x)
+    print(slider_x2)
+
+    musicImg = py.image.load("Media/music.png")
+    musicImg = py.transform.scale(musicImg, (slider_height*(775/322),slider_height))
+    musicImg_rect = musicImg.get_rect()
+    sfxImg = py.image.load("Media/sfx.png")
+    sfxImg = py.transform.scale(sfxImg, (slider_height*(642/389), slider_height))   
+    sfxImg_rect = sfxImg.get_rect() 
+
+    quitImg = py.image.load("Media/quit.png")
+    quitImg = py.transform.scale(quitImg, (settings.width/12, settings.width/12*(214/499)))
+    quitImg_rect = quitImg.get_rect()
+
+    backImg = py.image.load("Media/back.png")
+    backImg = py.transform.scale(backImg, quitImg.get_size())
+    backImg_rect = backImg.get_rect()
+
     while True:
+
+        bgm.set_volume(settings.musicVolume/3)
 
         for event in py.event.get():
             if event.type == py.QUIT: sys.exit()
             elif event.type == py.KEYDOWN:
                 if event.key == py.K_ESCAPE:
-                    py.image.save(screen, "screenshot.png")
                     if state != "pause":
                         prevState = state
                         state = "pause"
@@ -257,6 +290,10 @@ def playGame(screen):
                 if event.type == py.MOUSEBUTTONDOWN:
                     if birdsPlay1[3].rect.collidepoint(event.pos) and birdsPlay1[3].ifLaunched == False:
                         birdsPlay1[3].ifDragging = True
+                        py.mixer.music.load("Media/audio/sling_pull-2.mp3")
+                        py.mixer.music.play(loops=0)
+                        py.mixer.music.set_volume(settings.sfxVolume)
+
 
                 elif event.type == py.MOUSEBUTTONUP:
                     if birdsPlay1[3].ifDragging:
@@ -265,11 +302,18 @@ def playGame(screen):
 
                         birdsPlay1[3].initVelocity()    
                         birdsPlay1[3].startTime = py.time.get_ticks()
+                        py.mixer.music.load(birdsPlay1[3].launchSound)
+                        py.mixer.music.play(loops=0)
+                        py.mixer.music.set_volume(settings.sfxVolume)
+                        
 
             elif state=="player2":
                 if event.type == py.MOUSEBUTTONDOWN:
                     if birdsPlay2[3].rect.collidepoint(event.pos) and birdsPlay2[3].ifLaunched == False:
                         birdsPlay2[3].ifDragging = True
+                        py.mixer.music.load("Media/audio/sling_pull-2.mp3")
+                        py.mixer.music.play(loops=0)
+                        py.mixer.music.set_volume(settings.sfxVolume)
 
                 elif event.type == py.MOUSEBUTTONUP:
                     if birdsPlay2[3].ifDragging:
@@ -278,6 +322,44 @@ def playGame(screen):
 
                         birdsPlay2[3].initVelocity()
                         birdsPlay2[3].startTime = py.time.get_ticks()
+                        py.mixer.music.load(birdsPlay2[3].launchSound)
+                        py.mixer.music.play(loops=0)
+                        py.mixer.music.set_volume(settings.sfxVolume)
+
+            elif state=="pause":
+                if event.type == py.MOUSEBUTTONDOWN:
+                    mx, my = event.pos
+                    if (slider_x <= mx <= slider_x + slider_width) and (slider_y <= my <= slider_y + slider_height):
+                        dragging = True
+                        handler_x = max(slider_x, min(slider_x + slider_width, event.pos[0]))
+                        volume = (mx - slider_x) / slider_width
+                        settings.sfxVolume = volume
+                    elif (slider_x2 <= mx <= slider_x2+slider_width2) and (slider_y2 <= my <= slider_y2 + slider_height2):
+                        dragging2 = True
+                        handler_x2 = max(slider_x2, min(slider_x2+slider_width2,event.pos[0]))
+                        settings.musicVolume = (mx - slider_x2)/slider_width
+                    elif backImg_rect.collidepoint(event.pos):
+                        settings.state = "select"
+                        bgm.stop()
+                        return
+                    elif quitImg_rect.collidepoint(event.pos):
+                        sys.exit()
+                    
+                elif event.type == py.MOUSEBUTTONUP:
+                    dragging = False
+                    dragging2 = False
+                elif event.type == py.MOUSEMOTION and dragging:
+                    mx, my = event.pos
+                    volume = (mx - slider_x) / slider_width
+                    volume = max(0.0, min(1.0, volume))  # clamp between 0.0 and 1.0
+                    handler_x = max(slider_x, min(slider_x + slider_width, event.pos[0]))
+                    settings.sfxVolume = volume
+                elif event.type == py.MOUSEMOTION and dragging2:
+                    mx, my = event.pos
+                    volume = (mx - slider_x2) / slider_width2
+                    volume = max(0.0, min(1.0, volume))  # clamp between 0.0 and 1.0
+                    handler_x2 = max(slider_x2, min(slider_x2 + slider_width2, event.pos[0]))
+                    settings.musicVolume = volume
 
 
         score1 = settings.bigFont.render(str(Players.Player1.getScore()),True,settings.YELLOW)
@@ -345,7 +427,9 @@ def playGame(screen):
                     for j in range(2):
                         if blocks1[i][j] is not None:
                             if (scaleRect(birdsPlay1[3].rect)).colliderect(blocks1[i][j].rect):
-
+                                py.mixer.music.load("Media/audio/collision.wav")
+                                py.mixer.music.play()
+                                py.mixer.music.set_volume(settings.sfxVolume)
                                 if birdsPlay1[3].rect.centerx<=(blocks1[i][j].rect.left):
                                     birdsPlay1[3].collideTime = (py.time.get_ticks()-birdsPlay1[3].startTime)/1000
                                     birdsPlay1[3].velocity[0] = -birdsPlay1[3].velocity[0]*0.5
@@ -359,7 +443,7 @@ def playGame(screen):
                                 if birdsPlay1[3].affinity == blocks1[i][j].name:
                                     score = int(birdsPlay1[3].damageMultiplier*20)
                                 else:
-                                    score = int(20/birdsPlay1[3].damageMultiplier)
+                                    score = int(20*birdsPlay1[3].damageDivider)
                                 
                                 score = min(score,blocks1[i][j].health)
 
@@ -436,7 +520,9 @@ def playGame(screen):
                     for j in range(2):
                         if blocks2[i][j] is not None:
                             if scaleRect(birdsPlay2[3].rect).colliderect(blocks2[i][j].rect):
-                                
+                                py.mixer.music.load("Media/audio/collision.wav")
+                                py.mixer.music.play()
+                                py.mixer.music.set_volume(settings.sfxVolume)
                                 if birdsPlay2[3].rect.centerx>=(blocks2[i][j].rect.right):
                                     birdsPlay2[3].collideTime = (py.time.get_ticks()-birdsPlay2[3].startTime)/1000
                                     birdsPlay2[3].velocity[0] = -birdsPlay2[3].velocity[0]*0.5
@@ -450,7 +536,7 @@ def playGame(screen):
                                 if birdsPlay2[3].affinity == blocks2[i][j].name:
                                     score = int(birdsPlay2[3].damageMultiplier*20)
                                 else:
-                                    score = int(20/birdsPlay2[3].damageMultiplier)
+                                    score = int(20*birdsPlay2[3].damageDivider)
 
                                 score = min(score, blocks2[i][j].health)
 
@@ -490,7 +576,7 @@ def playGame(screen):
             dim_surface.fill((0, 0, 0, 200))
             screen.blit(dim_surface,(0,0))
             scoreDisplay = settings.bigFont.render("+"+str(score),True,settings.YELLOW)
-            scoreDisplay = py.transform.scale_by(scoreDisplay,2-t**2)
+            scoreDisplay = py.transform.scale_by(scoreDisplay,max(2-t**2,1))
             scoreDisplayRect = scoreDisplay.get_rect(center=(settings.width/2+(806-settings.width/2)*(t**2),(settings.height/2+(108-settings.height/2)*(t**2))))
             screen.blit(scoreDisplay,scoreDisplayRect)
             
@@ -531,7 +617,7 @@ def playGame(screen):
             dim_surface.fill((0, 0, 0, 200))
             screen.blit(dim_surface,(0,0))
             scoreDisplay = settings.bigFont.render("+"+str(score),True,settings.RED)
-            scoreDisplay = py.transform.scale_by(scoreDisplay,2-t**2)
+            scoreDisplay = py.transform.scale_by(scoreDisplay,max(2-t**2,1))
             scoreDisplayRect = scoreDisplay.get_rect(center=(settings.width/2+(1090-settings.width/2)*(t**2),settings.height/2+(108-settings.height/2)*(t**2)))
             screen.blit(scoreDisplay,scoreDisplayRect)
             
@@ -546,12 +632,49 @@ def playGame(screen):
             screen.blit(dim_surface,(0,0))
             pauseMenu = py.Rect(10,10,settings.width/3,settings.height/3)
             pauseMenu.center = (settings.width/2,settings.height/2)
+            
             py.draw.rect(screen, settings.RED, pauseMenu, border_radius=20)
+            py.draw.rect(screen, settings.black, pauseMenu, width=10)
+
             pauseText = settings.bigFont.render("PAUSE",True,settings.black)
-            pauseText = py.transform.scale(pauseText, (settings.width/8,settings.height/10))
+            pauseText = py.transform.scale(pauseText, (settings.width*0.8/8,settings.height*0.8/10))
             pauseText_rect = pauseText.get_rect()
             pauseText_rect.center = (pauseMenu.centerx,pauseMenu.top + settings.height/17)
             screen.blit(pauseText,pauseText_rect)
+
+            slider_x = pauseText_rect.centerx-slider_width/2+settings.width/30
+            slider_y = pauseText_rect.bottom + settings.height/60
+            py.draw.rect(screen, settings.GRAY, (slider_x, slider_y, slider_width, slider_height))
+
+            fill_width = handler_x-slider_x
+            if fill_width>0:
+                py.draw.rect(screen, settings.YELLOW, (slider_x, slider_y, fill_width, slider_height))
+
+            slider_x2 = slider_x
+            slider_y2 = slider_y + slider_height + settings.height/40
+            py.draw.rect(screen, settings.GRAY, (slider_x2, slider_y2, slider_width2, slider_height2))
+
+            fill_width2 = handler_x2-slider_x2
+            if fill_width2>0:
+                py.draw.rect(screen, settings.YELLOW, (slider_x2, slider_y2, fill_width2, slider_height2))
+
+            musicImg_rect.centery = slider_y2+slider_height2/2
+            musicImg_rect.centerx = (slider_x+settings.width/3)/2
+            screen.blit(musicImg, musicImg_rect)
+
+            sfxImg_rect.centery = slider_y+slider_height/2
+            sfxImg_rect.centerx = (slider_x+settings.width/3)/2
+            screen.blit(sfxImg, sfxImg_rect)
+
+            quitImg_rect.bottom = pauseMenu.bottom-settings.height/80
+            quitImg_rect.centerx = (settings.width/2+pauseMenu.right)/2
+            screen.blit(quitImg, quitImg_rect)
+
+            backImg_rect.bottom = quitImg_rect.bottom
+            backImg_rect.centerx = (pauseMenu.left+settings.width/2)/2
+            screen.blit(backImg, backImg_rect)
+
+
 
         clock.tick_busy_loop(60)
         py.display.flip()

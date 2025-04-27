@@ -19,9 +19,12 @@ STONE_GRAY = (161,153,140)
 ICE_BLUE = (119,209,244)
 DARK_GRAY = (31,31,31)
 ROPE_BROWN = (48,22,8)
-state = "winner"
+state = "select"
 winner = "PLAYER1"
 pauseTime = 0
+
+sfxVolume = 0.75
+musicVolume = 0.75
 
 clock = pygame.time.Clock()
 
@@ -36,27 +39,33 @@ blue = pygame.image.load("Media/Birds/blue1.png")
 stella = pygame.image.load("Media/Birds/stella1.png")
 
 WOOD = [
-    pygame.image.load("Media/Blocks/wood1.png"),
-    pygame.image.load("Media/Blocks/wood2.png"),
-    pygame.image.load("Media/Blocks/wood3.png"),
-    pygame.image.load("Media/Blocks/wood4.png"),
-    pygame.image.load("Media/Blocks/wood5.png")
+    pygame.image.load("Media/Blocks/woodblock1.png"),
+    pygame.image.load("Media/Blocks/woodblock2.png"),
+    pygame.image.load("Media/Blocks/woodblock4.png"),
+    pygame.image.load("Media/Blocks/woodblock5.png"),
+    pygame.image.load("Media/Blocks/wood_3.png")
 ]
 
 ICE = [
-    pygame.image.load("Media/Blocks/ice_1.png"),
-    pygame.image.load("Media/Blocks/ice_2.png"),
-    pygame.image.load("Media/Blocks/ice_3.png")
+    pygame.image.load("Media/Blocks/iceblock1.png"),
+    pygame.image.load("Media/Blocks/iceblock2.png"),
+    pygame.image.load("Media/Blocks/iceblock3.png"),
+    pygame.image.load("Media/Blocks/iceblock4.png"),
+    pygame.image.load("Media/Blocks/iceblock5.png")
 ]
 
 STONE = [
-    pygame.image.load("Media/Blocks/stone_1.png"),
-    pygame.image.load("Media/Blocks/stone_2.png"),
-    pygame.image.load("Media/Blocks/stone_3.png")
+    pygame.image.load("Media/Blocks/stone1.png"),
+    pygame.image.load("Media/Blocks/stone2.png"),
+    pygame.image.load("Media/Blocks/stone3.png"),
+    pygame.image.load("Media/Blocks/stone4.png"),
+    pygame.image.load("Media/Blocks/stone5.png")
 ]
 
 
-
+buttonHoverSound = pygame.mixer.Sound("Media/audio/button_hover.mp3")
+buttonClickSound = pygame.mixer.Sound("Media/audio/button_click1.mp3")
+menu_bg = pygame.image.load("Media/banner.png")
 
 def ScaleImage(image):
     return pygame.transform.scale(image,(50,50))

@@ -41,15 +41,28 @@ def menu(screen):
     bg = py.image.load("Media/Menu_background.jpg")
     bg = py.transform.scale(bg, screen.get_size())
     
-    py.mixer.music.load("Media/background_music.mp3")
-    py.mixer.music.play(-1)
-    py.mixer.music.set_volume(0.5)
+    
+    bgm = py.mixer.Sound("Media/background_music.mp3")
+    bgm.play(-1)
+    bgm.set_volume(settings.musicVolume)
+    
     isMusicPaused = False
 
-    
+    hoverSoundPlayed = False
+    hoverPlayPlayed = False
+    hoverQuitPlayed = False
+
+    menu_bg_rect = settings.menu_bg.get_rect()
 
     while True:
         multiplier = [1,1,1]
+
+        settings.buttonHoverSound.set_volume(settings.sfxVolume)
+        settings.buttonClickSound.set_volume(settings.sfxVolume)
+
+        mouse_click = py.mouse.get_pressed()
+        mouse_pos = py.mouse.get_pos()
+
         for event in py.event.get():
             if event.type == py.QUIT: sys.exit()
 
@@ -57,6 +70,7 @@ def menu(screen):
                 if sound_rect.collidepoint(event.pos):
                     if (currentSound==sound_on): 
                         currentSound=sound_off
+                        settings.buttonClickSound.play()
                         settings.ifAudio = False
                     else: 
                         settings.ifAudio = True
@@ -64,9 +78,11 @@ def menu(screen):
 
                 if play_rect.collidepoint(event.pos):
                     settings.state = "naming"
+                    settings.buttonClickSound.play()
                     return
                 
                 if quit_rect.collidepoint(event.pos):
+                    settings.buttonClickSound.play()
                     sys.exit()
 
         #Main logo
@@ -84,12 +100,27 @@ def menu(screen):
 
         if sound_rect.collidepoint(py.mouse.get_pos()):
             multiplier[0] = 1.2
+            if not hoverSoundPlayed:
+                settings.buttonHoverSound.play()
+                hoverSoundPlayed = True
+        else:
+            hoverSoundPlayed = False
 
         if play_rect.collidepoint(py.mouse.get_pos()):
             multiplier[1] = 1.4
+            if not hoverPlayPlayed:
+                settings.buttonHoverSound.play()
+                hoverPlayPlayed = True
+        else:
+            hoverPlayPlayed = False
 
         if quit_rect.collidepoint(py.mouse.get_pos()):
             multiplier[2] = 1.4
+            if not hoverQuitPlayed:
+                settings.buttonHoverSound.play()
+                hoverQuitPlayed = True
+        else:
+            hoverQuitPlayed = False
 
         #Sound button
         sound = py.transform.scale_by(currentSound, multiplier[0]*returnScale(startTime))

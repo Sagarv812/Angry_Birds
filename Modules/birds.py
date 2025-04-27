@@ -1,5 +1,4 @@
 import pygame as py, sys, time
-import copy
 
 birds = [
     ["Media/Birds/red1.png",None,10],
@@ -21,7 +20,7 @@ def scaler(img):
 
 class Birds:
 
-    def __init__(self, name, image, affinity, speed, baseDamage, damageMultiplier, avatarImg):
+    def __init__(self, name, image, affinity, speed, baseDamage, damageMultiplier, damageDivider, avatarImg):
         self.name = name
         self.image = image
         self.initImage = image
@@ -39,12 +38,16 @@ class Birds:
         self.collideTime = 0
         self.ifBounced = False
         self.ifCollideTop = False
+        self.damageDivider = damageDivider
+        self.launchSound = None
 
     def changeAffinity(self, newAffinity):
         self.affinity = newAffinity
 
     def clone(self):
-        return Birds(self.name, self.image,self.affinity,self.speed,self.baseDamage,self.damageMultiplier,self.avatarImg)
+        bird = Birds(self.name, self.image,self.affinity,self.speed,self.baseDamage,self.damageMultiplier,self.damageDivider,self.avatarImg)
+        bird.addLaunchSound(self.launchSound)
+        return bird
     
     def getAffinity(self):
         return self.affinity
@@ -84,7 +87,7 @@ class Birds:
         slingCenter = py.Vector2(self.initRect.center)
         birdCenter = py.Vector2(self.rect.center)
         self.velocity = (slingCenter-birdCenter)*0.2*(self.speed**0.2)
-        self.changeVelocity = copy.copy(self.velocity)
+        self.changeVelocity = self.velocity.copy()
         self.initRect = self.rect   
 
     #template(old pixel count, time b/w two frames in milliseconds, speed in pixels/s)
@@ -150,10 +153,20 @@ class Birds:
         print("ifLaunched = ", self.ifLaunched)
         print("ifCollided = ", self.ifCollided)
 
-red = Birds("Red",py.transform.scale_by(py.image.load("Media/Birds/red1.png"), 0.11),None,2,20,1,scaler(py.image.load("Media/Birds/red_avatar.png")))
-chuck = Birds("Chuck",py.transform.scale_by(py.image.load("Media/Birds/chuck1.png"), 0.3),"wood",4,15,1.5,scaler(py.image.load("Media/Birds/chuck_avatar.png")))
-bomb = Birds("Bomb",py.transform.scale_by(py.image.load("Media/Birds/bomb1.png"), 0.35),"stone",1,25,1.5,scaler(py.image.load("Media/Birds/bomb_avatar.png")))
-blue = Birds("Blue",py.transform.scale_by(py.image.load("Media/Birds/blue1.png"), 0.35),"ice",3,10,1.5,scaler(py.image.load("Media/Birds/blue_avatar.png")))
-stella = Birds("Stella",py.transform.scale_by(py.image.load("Media/Birds/stella1.png"), 0.42),None,2,20,2,scaler(py.image.load("Media/Birds/stella_avatar.png")))
+    def addLaunchSound(self,sound):
+        self.launchSound = sound
 
+red = Birds("Red",py.transform.scale_by(py.image.load("Media/Birds/red1.png"), 0.11),None,2,20,1,1,scaler(py.image.load("Media/Birds/red_avatar.png")))
+chuck = Birds("Chuck",py.transform.scale_by(py.image.load("Media/Birds/chuck1.png"), 0.3),"wood",4,15,1.5,0.75,scaler(py.image.load("Media/Birds/chuck_avatar.png")))
+bomb = Birds("Bomb",py.transform.scale_by(py.image.load("Media/Birds/bomb1.png"), 0.35),"stone",1,25,1.5,0.75,scaler(py.image.load("Media/Birds/bomb_avatar.png")))
+blue = Birds("Blue",py.transform.scale_by(py.image.load("Media/Birds/blue1.png"), 0.35),"ice",3,10,1.5,0.75,scaler(py.image.load("Media/Birds/blue_avatar.png")))
+stella = Birds("Stella",py.transform.scale_by(py.image.load("Media/Birds/stella1.png"), 0.42),None,2,20,2,0.5,scaler(py.image.load("Media/Birds/stella_avatar.png")))
+
+birdNames = ["red","chuck","bomb","blue","stella"]
 birds = [red,chuck,bomb,blue,stella]
+
+for i in range(5):
+    birds[i].addLaunchSound(f"Media/audio/{birdNames[i]}_launch.mp3")
+
+
+

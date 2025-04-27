@@ -22,6 +22,11 @@ def winnerAnimation(screen):
     stars_rect = stars.get_rect()
     bg = py.transform.scale(settings.bg, screen.get_size())
 
+    py.mixer.music.stop()
+    py.mixer.music.load("Media/audio/game_complete.mp3")
+    py.mixer.music.play(-1)
+    py.mixer.music.set_volume(settings.musicVolume)
+
     bird_rect.center = (settings.width/2, settings.height/2)
     crown_rect.bottom = bird_rect.top+settings.height/6
     crown_rect.centerx = bird_rect.centerx+settings.width/70

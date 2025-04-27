@@ -4,6 +4,11 @@ import Modules.birds as Birds
 import Modules.players as Players
 
 def chooseBird(screen, pNo):
+    py.mixer.music.stop()
+    if settings.ifAudio:
+        py.mixer.music.load("Media/background_music.mp3")
+        py.mixer.music.play(-1)
+        py.mixer.music.set_volume(settings.musicVolume)
 
     if pNo==1:
         playerName = settings.bigFont.render(f'{Players.Player1.getName()}, SELECT BIRDS', True, settings.RED)
@@ -71,11 +76,11 @@ def chooseBird(screen, pNo):
     dim_surface = py.Surface(screen.get_size(), py.SRCALPHA)
     dim_surface.fill((0, 0, 0, 180))
 
-    wood = py.transform.scale_by(settings.WOOD[0], 0.25)
+    wood = py.transform.scale(settings.WOOD[0], (settings.width/30,settings.width/30))
     wood_rect= wood.get_rect()
-    stone = py.transform.scale_by(settings.STONE[0], 0.25)
+    stone = py.transform.scale(settings.STONE[0], (settings.width/30,settings.width/30))
     stone_rect = stone.get_rect()
-    ice = py.transform.scale_by(settings.ICE[0], 0.25)
+    ice = py.transform.scale(settings.ICE[0], (settings.width/30,settings.width/30))
     ice_rect = ice.get_rect()
 
     blocks = {}
