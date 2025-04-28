@@ -181,7 +181,7 @@ def displayBlocks(screen, blocks, playerNo):
 
 
 def playGame(screen):
-    py.mixer.music.stop()
+    py.mixer.stop()
 
     clock = py.time.Clock()
 
@@ -201,8 +201,8 @@ def playGame(screen):
     duration = 1
     scoreTime = 0
     score = 0
-    py.mixer.music.stop()
-    bgm = py.mixer.Sound("Media/audio/battle_music.mp3")
+
+    bgm = settings.currentBgm
     bgm.play(-1)
     bgm.set_volume(settings.musicVolume/3)
     # py.mixer.music.load("Media/audio/battle_music.mp3")
@@ -364,7 +364,7 @@ def playGame(screen):
 
         score1 = settings.bigFont.render(str(Players.Player1.getScore()),True,settings.YELLOW)
         score2 = settings.bigFont.render(str(Players.Player2.getScore()),True,settings.RED)
-        screen.blit(py.transform.scale(settings.bg1,screen.get_size()),(0,0))
+        screen.blit(py.transform.scale(settings.currentBg,screen.get_size()),(0,0))
 
 
         if state=="static":

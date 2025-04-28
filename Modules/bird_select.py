@@ -4,11 +4,11 @@ import Modules.birds as Birds
 import Modules.players as Players
 
 def chooseBird(screen, pNo):
-    py.mixer.music.stop()
+    py.mixer.stop()
+    print(settings.currentBgm)
     if settings.ifAudio:
-        py.mixer.music.load("Media/background_music.mp3")
-        py.mixer.music.play(-1)
-        py.mixer.music.set_volume(settings.musicVolume)
+        settings.currentBgm.play(-1)
+        settings.currentBgm.set_volume(settings.musicVolume)
 
     if pNo==1:
         playerName = settings.bigFont.render(f'{Players.Player1.getName()}, SELECT BIRDS', True, settings.RED)
@@ -115,7 +115,7 @@ def chooseBird(screen, pNo):
             
             elif event.type == py.MOUSEBUTTONDOWN:
                 if backButtonRect.collidepoint(event.pos):
-                    settings.state = "naming"
+                    settings.state = "theme"
                     return
                 elif next_rect.collidepoint(event.pos):
                     settings.state = "play"
@@ -198,7 +198,7 @@ def chooseBird(screen, pNo):
         birdRects = [red_rect, chuck_rect, bomb_rect, blue_rect, stella_rect]
 
         screen.fill(settings.black)
-        screen.blit(py.transform.scale(settings.bg, screen.get_size()), (0,0))
+        screen.blit(py.transform.scale(settings.currentBg, screen.get_size()), (0,0))
         py.draw.rect(screen, settings.YELLOW, box, border_radius=15)
         screen.blit(playerName, playerName_rect)
         screen.blit(instructions1, instructions1_rect)

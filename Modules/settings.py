@@ -19,7 +19,7 @@ STONE_GRAY = (161,153,140)
 ICE_BLUE = (119,209,244)
 DARK_GRAY = (31,31,31)
 ROPE_BROWN = (48,22,8)
-state = "select"
+state = "theme"
 winner = "PLAYER1"
 pauseTime = 0
 
@@ -30,7 +30,10 @@ clock = pygame.time.Clock()
 
 bg = pygame.image.load("Media/Menu_background.jpg")
 
-bg1 = pygame.image.load("Media/background1.jpg")
+currentBg = None
+currentBgm = None
+
+
 
 red = pygame.image.load("Media/Birds/red1.png")
 chuck = pygame.image.load("Media/Birds/chuck1.png")
@@ -64,8 +67,17 @@ STONE = [
 
 
 buttonHoverSound = pygame.mixer.Sound("Media/audio/button_hover.mp3")
+
 buttonClickSound = pygame.mixer.Sound("Media/audio/button_click1.mp3")
-menu_bg = pygame.image.load("Media/banner.png")
+
+bg1 = pygame.image.load("Media/space_theme.png")
+bg2 = pygame.image.load("Media/spooky_theme.png")
+bg3 = pygame.image.load("Media/samurai_theme.png")
+
+bgm1 = pygame.mixer.Sound("Media/audio/space_bgm.mp3")
+bgm2 = pygame.mixer.Sound("Media/audio/spooky_bgm.mp3")
+bgm3 = pygame.mixer.Sound("Media/audio/samurai_bgm.mp3")
+
 
 def ScaleImage(image):
     return pygame.transform.scale(image,(50,50))

@@ -19,6 +19,7 @@ def returnScale(startTime):
 
 
 def menu(screen):
+    py.mixer.stop()
     logo_init = py.image.load("Media/logo.png")
 
     sound_on = py.image.load("Media/Settings/volume_on_1.png")
@@ -43,7 +44,7 @@ def menu(screen):
     
     
     bgm = py.mixer.Sound("Media/background_music.mp3")
-    bgm.play(-1)
+    channel = bgm.play(-1)
     bgm.set_volume(settings.musicVolume)
     
     isMusicPaused = False
@@ -52,7 +53,6 @@ def menu(screen):
     hoverPlayPlayed = False
     hoverQuitPlayed = False
 
-    menu_bg_rect = settings.menu_bg.get_rect()
 
     while True:
         multiplier = [1,1,1]
@@ -91,11 +91,11 @@ def menu(screen):
         logo_rect.center = (settings.width/2, settings.height/2-250)
 
         if (currentSound==sound_off and isMusicPaused == False):
-            py.mixer.music.pause()
+            channel.pause()
             isMusicPaused = True
 
         if (currentSound==sound_on and isMusicPaused == True):
-            py.mixer.music.unpause()
+            channel.unpause()
             isMusicPaused = False
 
         if sound_rect.collidepoint(py.mouse.get_pos()):

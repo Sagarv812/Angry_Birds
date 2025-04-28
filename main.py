@@ -9,6 +9,7 @@ import Modules.bird_select as selection
 import Modules.players as People
 import Modules.play as Play
 import Modules.winner as Winner
+import Modules.theme_select as Theme
 import random
 
 pygame.init()
@@ -35,6 +36,8 @@ while True:
         menu.menu(screen)
     elif settings.state == "naming":
         Players.naming(screen)
+    elif settings.state == "theme":
+        Theme.selectTheme(screen)
     elif settings.state == "select": 
         for i in range(1,3):
             selection.chooseBird(screen, i)

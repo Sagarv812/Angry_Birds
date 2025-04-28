@@ -54,6 +54,7 @@ def naming(screen):
     back.right = popup.right-50
     back.top = next.top
     
+    hoverPlay = False
 
     while True:
         
@@ -66,12 +67,18 @@ def naming(screen):
             elif event.type == py.MOUSEBUTTONDOWN:
                 if done != [True, True]:
                     if input_box1.collidepoint(event.pos):
+                        settings.buttonClickSound.set_volume(settings.sfxVolume)
+                        settings.buttonClickSound.play()
                         active1 = True
                         active2 = False
                     elif input_box2.collidepoint(event.pos):
+                        settings.buttonClickSound.set_volume(settings.sfxVolume)
+                        settings.buttonClickSound.play()
                         active2 = True
                         active1 = False
                     elif backButtonRect.collidepoint(event.pos):
+                        settings.buttonClickSound.set_volume(settings.sfxVolume)
+                        settings.buttonClickSound.play()
                         Players.Player1.changeName("Player 1")
                         Players.Player2.changeName("Player 2")
                         settings.state = "menu"
@@ -81,7 +88,7 @@ def naming(screen):
                 
                 else:
                     if next.collidepoint(event.pos):
-                        settings.state = "select"
+                        settings.state = "theme"
                         return
                     elif back.collidepoint(event.pos):
                         done = [False, False]
@@ -126,6 +133,12 @@ def naming(screen):
         
         if backButtonRect.collidepoint(py.mouse.get_pos()):
             multiplier = 1.2
+            if not hoverPlay:
+                settings.buttonHoverSound.set_volume(settings.sfxVolume)
+                settings.buttonHoverSound.play()
+                hoverPlay = True
+        else:
+            hoverPlay = False
 
         screen.fill(settings.black)
         screen.blit(bg, (0,0))
