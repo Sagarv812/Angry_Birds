@@ -19,7 +19,7 @@ STONE_GRAY = (161,153,140)
 ICE_BLUE = (119,209,244)
 DARK_GRAY = (31,31,31)
 ROPE_BROWN = (48,22,8)
-state = "theme"
+state = "load"
 winner = "PLAYER1"
 pauseTime = 0
 
@@ -78,9 +78,3 @@ bgm1 = pygame.mixer.Sound("Media/audio/space_bgm.mp3")
 bgm2 = pygame.mixer.Sound("Media/audio/spooky_bgm.mp3")
 bgm3 = pygame.mixer.Sound("Media/audio/samurai_bgm.mp3")
 
-
-def ScaleImage(image):
-    return pygame.transform.scale(image,(50,50))
-
-def ScaleBiggerImage(image):
-    return pygame.transform.scale(image,(200,200))

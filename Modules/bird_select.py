@@ -5,7 +5,7 @@ import Modules.players as Players
 
 def chooseBird(screen, pNo):
     py.mixer.stop()
-    print(settings.currentBgm)
+    w, h = screen.get_size()
     if settings.ifAudio:
         settings.currentBgm.play(-1)
         settings.currentBgm.set_volume(settings.musicVolume)
@@ -15,41 +15,42 @@ def chooseBird(screen, pNo):
     else:
         playerName = settings.bigFont.render(f"{Players.Player2.getName()}, SELECT BIRDS", True, settings.RED)
 
-    # playerName = py.transform.scale_by(playerName, 1.5)
-    font = py.font.SysFont("ubuntu",60)
+    playerName = py.transform.scale_by(playerName, w/1920)
+    font = py.font.SysFont("ubuntu",int(settings.width/32))
     playerName_rect = playerName.get_rect()
-    playerName_rect.center = (settings.width/2, 100)
+    playerName_rect.center = (settings.width/2, settings.height/10.8)
     instructions1 = settings.bigFont.render("CHOOSE UPTO 3 BIRDS", True, settings.RED)
-    instructions1 = py.transform.scale_by(instructions1, 0.5)
+    instructions1 = py.transform.scale(instructions1, (settings.width/2.2, settings.height/9.3))
+    instructions1 = py.transform.scale(instructions1, (settings.width/4.32, settings.height/18))
     instructions1_rect = instructions1.get_rect()
-    instructions1_rect.center = (settings.width/2, 200)
+    instructions1_rect.center = (settings.width/2, settings.height/5.4)
 
-    red_init = py.transform.scale_by(settings.red, 0.11)
+    red_init = py.transform.scale(settings.red, (settings.width/6.5, settings.height/3.8))
     red_rect = red_init.get_rect()
-    chuck_init = py.transform.scale_by(settings.chuck, 0.3)
+    chuck_init = py.transform.scale(settings.chuck, (settings.width/6.3, settings.height/3.8))
     chuck_rect = chuck_init.get_rect()
-    bomb_init = py.transform.scale_by(settings.bomb, 0.35)
+    bomb_init = py.transform.scale(settings.bomb, (settings.width/7, settings.height/3))
     bomb_rect = bomb_init.get_rect()
-    blue_init = py.transform.scale_by(settings.blue, 0.35)
+    blue_init = py.transform.scale(settings.blue, (settings.width/6.5, settings.height/3.6))
     blue_rect = blue_init.get_rect()
-    stella_init = py.transform.scale_by(settings.stella, 0.42)
+    stella_init = py.transform.scale(settings.stella, (settings.width/5.2, settings.height/3.8))
     stella_rect = stella_init.get_rect()
     birdRects = [red_rect, chuck_rect, bomb_rect, blue_rect, stella_rect]
 
-    red_center = (300+red_init.get_width()/2,300+red_init.get_height()/2)
-    chuck_center = (800+chuck_init.get_width()/2, 300+chuck_init.get_height()/2)
-    bomb_center = (1350+bomb_init.get_width()/2, 250+bomb_init.get_height()/2)
-    blue_center = (550+blue_init.get_width()/2, 650+blue_init.get_height()/2)
-    stella_center = (1000+stella_init.get_width()/2, 650+stella_init.get_height()/2)
+    red_center = (w/4.3,h/2.4)
+    chuck_center = (w/2, h/2.4)
+    bomb_center = (w/1.3, h/2.5)
+    blue_center = (w/2.75, h/1.35)
+    stella_center = (w/1.6, h/1.4)
 
-    box = py.Rect(80, 80, playerName.get_width()+40, instructions1_rect.bottom-playerName_rect.top+40)
+    box = py.Rect(80, 80, max(w/2,playerName.width), h/4.7)
     box.centerx = settings.width/2
-    box.top = playerName_rect.top - 20
+    box.top = playerName_rect.top - h/54
 
     backButtonInit = py.image.load("Media/back.png")
-    backButtonInit = py.transform.scale_by(backButtonInit, 0.5)
+    backButtonInit = py.transform.scale(backButtonInit, (w/7.7,h/8.7))
     backButtonRect = backButtonInit.get_rect()
-    backButtonRect.topleft = (50,50)
+    backButtonRect.topleft = (w/38.4,h/21.6)
 
     birdsInfo = [
         ("RED","does equal damage to all blocks"),
@@ -69,7 +70,7 @@ def chooseBird(screen, pNo):
 
     selectBirds = [False,False,False,False,False]
     tick = py.image.load("Media/tick1.png")
-    tick = py.transform.scale_by(tick, 0.3)
+    tick = py.transform.scale(tick, (w/12,h/7.7))
     tick_rect = tick.get_rect()
     stellaSelect = False
 
@@ -90,17 +91,17 @@ def chooseBird(screen, pNo):
 
 
     wood_text = settings.bigFont.render("WOOD", True, settings.WOOD_BROWN)
-    wood_text = py.transform.scale_by(wood_text, 0.35)
+    wood_text = py.transform.scale_by(wood_text, w/5485.7)
     wood_text_rect = wood_text.get_rect()
     ice_text = settings.bigFont.render("ICE", True, settings.ICE_BLUE)
-    ice_text = py.transform.scale_by(ice_text, 0.35)
+    ice_text = py.transform.scale_by(ice_text, w/5485.7)
     ice_text_rect = ice_text.get_rect()
     stone_text = settings.bigFont.render("STONE", True, settings.STONE_GRAY)
-    stone_text = py.transform.scale_by(stone_text, 0.35)
+    stone_text = py.transform.scale_by(stone_text, w/5485.7)
     stone_text_rect = stone_text.get_rect()
 
     next_init = py.image.load("Media/next.png")
-    next_init = py.transform.scale_by(next_init, 0.4)
+    next_init = py.transform.scale(next_init, (w/6.7,h/7.7))
     next_rect = next_init.get_rect()
     next_rect.center = (settings.width - backButtonRect.centerx,settings.height-backButtonRect.centery)
     Birds.stella.changeAffinity(None)
@@ -167,7 +168,7 @@ def chooseBird(screen, pNo):
 
         backButton = py.transform.scale_by(backButtonInit, backMultiplier)
         backButtonRect = backButton.get_rect()
-        backButtonRect.topleft = (100,50)
+        backButtonRect.topleft = (w/19.2,h/21.6)
 
         
 
@@ -217,23 +218,23 @@ def chooseBird(screen, pNo):
         for i in range(5):
             if birdsMultiplier[i] == 1.2:
                 birdName = settings.bigFont.render(birdsInfo[i][0], True, colours[i])
-                birdName = py.transform.scale_by(birdName, 0.4)
+                birdName = py.transform.scale_by(birdName, w/4800)
                 birdName_rect = birdName.get_rect()
                 birdText = settings.bigFont.render(birdsInfo[i][1], True, settings.WHITE)
-                birdText = py.transform.scale_by(birdText, 0.3)
+                birdText = py.transform.scale_by(birdText, w/6400)
                 birdText_rect = birdText.get_rect()
-                infoBox = py.Rect(10,10,max(birdName.get_width(),birdText.get_width())+20, 100)
+                infoBox = py.Rect(10,10,max(birdName.get_width(),birdText.get_width())+w/96, h/10.8)
                 if i==0 or i==1:
-                    infoBox.topleft = (py.mouse.get_pos()[0]+10,py.mouse.get_pos()[1])
+                    infoBox.topleft = (py.mouse.get_pos()[0]+w/192,py.mouse.get_pos()[1])
                 elif i==2:
-                    infoBox.topright = (py.mouse.get_pos()[0]-10,py.mouse.get_pos()[1])
+                    infoBox.topright = (py.mouse.get_pos()[0]-w/192,py.mouse.get_pos()[1])
                 elif i==3:
-                    infoBox.bottomleft = (py.mouse.get_pos()[0]+10,py.mouse.get_pos()[1])
+                    infoBox.bottomleft = (py.mouse.get_pos()[0]+w/192,py.mouse.get_pos()[1])
                 else:
-                    infoBox.bottomright = (py.mouse.get_pos()[0]-10,py.mouse.get_pos()[1])
+                    infoBox.bottomright = (py.mouse.get_pos()[0]-w/192,py.mouse.get_pos()[1])
 
-                birdName_rect.center = (infoBox.centerx, infoBox.centery-20)
-                birdText_rect.center = (infoBox.centerx, birdName_rect.centery+40)
+                birdName_rect.center = (infoBox.centerx, infoBox.centery-h/54)
+                birdText_rect.center = (infoBox.centerx, birdName_rect.centery+h/27)
 
                 py.draw.rect(screen, settings.black, infoBox, border_radius=15)
                 screen.blit(birdName, birdName_rect)
@@ -242,15 +243,15 @@ def chooseBird(screen, pNo):
         if stellaSelect:
             screen.blit(dim_surface, (0,0))
             screen.blit(stella, stella_rect)
-            wood_rect.center = (stella_rect.right+50, stella_rect.top+50)
-            ice_rect.center = (wood_rect.centerx, wood_rect.centery+100)
-            stone_rect.center = (wood_rect.centerx, ice_rect.centery+100)
+            wood_rect.center = (stella_rect.right+w/38.4, stella_rect.top+h/21.6)
+            ice_rect.center = (wood_rect.centerx, wood_rect.centery+h/10.8)
+            stone_rect.center = (wood_rect.centerx, ice_rect.centery+h/10.8)
             wood_text_rect.centery = wood_rect.centery
-            wood_text_rect.left = wood_rect.right+20
+            wood_text_rect.left = wood_rect.right+w/96
             ice_text_rect.centery = ice_rect.centery
-            ice_text_rect.left = ice_rect.right+20
+            ice_text_rect.left = ice_rect.right+w/96
             stone_text_rect.centery = stone_rect.centery
-            stone_text_rect.left = stone_rect.right+20
+            stone_text_rect.left = stone_rect.right+w/96
             screen.blit(wood, wood_rect)
             screen.blit(ice, ice_rect)
             screen.blit(stone, stone_rect)
@@ -261,7 +262,7 @@ def chooseBird(screen, pNo):
         if sum(selectBirds)>0:
             next = py.transform.scale_by(next_init, nextMultipler)
             next_rect = next.get_rect()
-            next_rect.center = (settings.width - backButtonRect.centerx-50,settings.height-backButtonRect.centery-50)
+            next_rect.center = (settings.width - backButtonRect.centerx-w/38.4,settings.height-backButtonRect.centery-h/21.6)
             screen.blit(next, next_rect)
 
 

@@ -8,7 +8,7 @@ import time
 maxAnimTime = 0.75
 
 def returnScale(startTime):
-    global maxAnimTime, minAnimTime
+    global maxAnimTime
     timePassed = (py.time.get_ticks() - startTime)/1000
     if timePassed<=maxAnimTime:
         return timePassed*(1/maxAnimTime)
@@ -20,21 +20,23 @@ def returnScale(startTime):
 
 def menu(screen):
     py.mixer.stop()
+    print(settings.width)
     logo_init = py.image.load("Media/logo.png")
+    logo_init = py.transform.scale(logo_init,(settings.width/2.15,settings.height/1.8))
 
     sound_on = py.image.load("Media/Settings/volume_on_1.png")
-    sound_on = py.transform.scale_by(sound_on, 0.2)
+    sound_on = py.transform.scale(sound_on, (settings.width/9.4,settings.height/5.3))
     sound_rect = sound_on.get_rect()
     sound_off = py.image.load("Media/Settings/volume_off_1.png")
-    sound_off = py.transform.scale_by(sound_off, 0.2)
+    sound_off = py.transform.scale(sound_off, (settings.width/9.4,settings.height/5.3))
     currentSound = sound_on
 
     play_init = py.image.load("Media/play_1.png")
-    play_init = py.transform.scale_by(play_init, 0.5)
+    play_init = py.transform.scale(play_init, (settings.width/3.85,settings.height/5))
     play_rect = play_init.get_rect()
 
     quit_init = py.image.load("Media/quit.png")
-    quit_init = py.transform.scale_by(quit_init, 0.5)
+    quit_init = py.transform.scale(quit_init, (settings.width/7.7,settings.height/10))
     quit_rect = quit_init.get_rect()
 
     startTime = py.time.get_ticks()
@@ -88,7 +90,7 @@ def menu(screen):
         #Main logo
         logo = py.transform.scale_by(logo_init, returnScale(startTime))
         logo_rect = logo.get_rect()
-        logo_rect.center = (settings.width/2, settings.height/2-250)
+        logo_rect.center = (settings.width/2, settings.height/3.75)
 
         if (currentSound==sound_off and isMusicPaused == False):
             channel.pause()
@@ -125,17 +127,17 @@ def menu(screen):
         #Sound button
         sound = py.transform.scale_by(currentSound, multiplier[0]*returnScale(startTime))
         sound_rect = sound.get_rect()
-        sound_rect.center = (1600, 800)
+        sound_rect.center = (settings.width/1.2, settings.height/1.2)
 
         #Play button
         play = py.transform.scale_by(play_init, multiplier[1]*returnScale(startTime))
         play_rect = play.get_rect()
-        play_rect.center = (settings.width/2, 670)
+        play_rect.center = (settings.width/2, settings.height/1.6)
 
         #Quit button
         quit = py.transform.scale_by(quit_init, multiplier[2]*returnScale(startTime))
         quit_rect = quit.get_rect()
-        quit_rect.center = (settings.width/2, 870)
+        quit_rect.center = (settings.width/2, settings.height/1.25)
 
         screen.fill(settings.black)
         screen.blit(bg, (0,0))

@@ -272,6 +272,8 @@ def playGame(screen):
     backImg = py.transform.scale(backImg, quitImg.get_size())
     backImg_rect = backImg.get_rect()
 
+    pauseStart = 0
+
     while True:
 
         bgm.set_volume(settings.musicVolume/3)

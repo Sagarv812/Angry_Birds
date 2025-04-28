@@ -19,9 +19,9 @@ def loadScreen(screen):
     image_x = int(settings.width/2-w/2)
     image_y = int(settings.height/2-h/2)
     logo_rect = logo.get_rect()
-    logo_rect.topleft = (image_x, image_y-150)
-    bar_size = (500, 50)
-    bar_position = (logo_rect.centerx-bar_size[0]/2, logo_rect.bottom+20)
+    logo_rect.center = (settings.width/2,settings.height/3)
+    bar_size = (settings.width/4, settings.height/20)
+    bar_position = (logo_rect.centerx-bar_size[0]/2, logo_rect.bottom+settings.height/50)
 
     progress = 0
     while True:
