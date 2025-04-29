@@ -14,11 +14,9 @@ import random
 
 pygame.init()
 
-
+info = pygame.display.Info()
 size = width, height = 1920, 1080
-speed = [10,-10]
-black = 0, 0, 0
-screen = pygame.display.set_mode((1920,1080))
+screen = pygame.display.set_mode((info.current_w,info.current_h),settings.flags)
 pygame.display.set_caption("ANGRY BIRDS")
 # red = pygame.image.load(bird.birds["Red"][0])
 # red = ScaleImage(red)
@@ -47,8 +45,6 @@ while True:
         Play.playGame(screen)
     else:
         Winner.winnerAnimation(screen)
-        print(People.Player1.birds)
-        print(People.Player2.birds)
         break
 
 

@@ -31,7 +31,7 @@ def chooseBird(screen, pNo):
     chuck_rect = chuck_init.get_rect()
     bomb_init = py.transform.scale(settings.bomb, (settings.width/7, settings.height/3))
     bomb_rect = bomb_init.get_rect()
-    blue_init = py.transform.scale(settings.blue, (settings.width/6.5, settings.height/3.6))
+    blue_init = py.transform.scale(settings.blue, (settings.width/6.5, settings.height/4))
     blue_rect = blue_init.get_rect()
     stella_init = py.transform.scale(settings.stella, (settings.width/5.2, settings.height/3.8))
     stella_rect = stella_init.get_rect()

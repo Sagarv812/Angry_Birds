@@ -82,16 +82,19 @@ def selectTheme(screen):
                     settings.currentBg = settings.bg1
                     settings.currentBgm = settings.bgm1
                     settings.state = "select"
+                    settings.theme = "space"
                     return
                 elif th2_rect.collidepoint(event.pos):
                     settings.currentBg = settings.bg2
                     settings.currentBgm = settings.bgm2
                     settings.state = "select"
+                    settings.theme = "ghost"
                     return
                 elif th3_rect.collidepoint(event.pos):
                     settings.currentBg = settings.bg3
                     settings.currentBgm = settings.bgm3
                     settings.state = "select"
+                    settings.theme = "samurai"
                     return
                 elif backButtonRect.collidepoint(event.pos):
                     settings.state = "naming"

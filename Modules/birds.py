@@ -9,8 +9,8 @@ birds = [
 ]
 #template = {image file,affinity,speed}
 
-def transformX(x, playerNo):
-    return x if playerNo==1 else 1920-x
+def transformX(x, playerNo, width):
+    return x if playerNo==1 else width-x
 
 def rotateImg(self,playerNo):
     return py.transform.scale()
@@ -20,7 +20,7 @@ def scaler(img):
 
 class Birds:
 
-    def __init__(self, name, image, affinity, speed, baseDamage, damageMultiplier, damageDivider, avatarImg):
+    def __init__(self, name, image, affinity, speed, baseDamage, damageMultiplier, damageDivider, avatarImg, scaleFactor):
         self.name = name
         self.image = image
         self.initImage = image
@@ -40,12 +40,13 @@ class Birds:
         self.ifCollideTop = False
         self.damageDivider = damageDivider
         self.launchSound = None
+        self.scaleFactor = scaleFactor
 
     def changeAffinity(self, newAffinity):
         self.affinity = newAffinity
 
     def clone(self):
-        bird = Birds(self.name, self.image,self.affinity,self.speed,self.baseDamage,self.damageMultiplier,self.damageDivider,self.avatarImg)
+        bird = Birds(self.name, self.image,self.affinity,self.speed,self.baseDamage,self.damageMultiplier,self.damageDivider,self.avatarImg,self.scaleFactor)
         bird.addLaunchSound(self.launchSound)
         return bird
     
@@ -83,28 +84,28 @@ class Birds:
     #         py.draw.circle(screen, (255,255,255), (int(x),int(y)), dot_radius)
 
         
-    def initVelocity(self):
+    def initVelocity(self,width):
         slingCenter = py.Vector2(self.initRect.center)
         birdCenter = py.Vector2(self.rect.center)
-        self.velocity = (slingCenter-birdCenter)*0.2*(self.speed**0.2)
+        self.velocity = (slingCenter-birdCenter)*0.2*(self.speed**0.2)*((width/1920)**0.1)
         self.changeVelocity = self.velocity.copy()
         self.initRect = self.rect   
 
     #template(old pixel count, time b/w two frames in milliseconds, speed in pixels/s)
-    def updatePos(self, birdNo, playerNo, sling_rect, collidedBlockRect=None):
-        g = 20
+    def updatePos(self, birdNo, playerNo, sling_rect, bottom, width, height):
+        g = 20*height/1080
         # sling_rect_trans = copy.copy(sling_rect)
         # sling_rect_trans.x = transformX(sling_rect.x,playerNo)
         if birdNo==3:
             if self.ifDragging:
                 point1 = py.math.Vector2(self.initRect.center)
                 point2 = py.math.Vector2(py.mouse.get_pos())
-                if (point1.distance_to(point2)<200):
+                if (point1.distance_to(point2)<200*width/1920):
                     self.rect.center = py.mouse.get_pos()
                 else:
                     direction = point2 - point1
                     unit_direction = direction.normalize()
-                    self.rect.center = point1+200*unit_direction
+                    self.rect.center = point1+200*unit_direction*width/1920
                     point2 = py.Vector2(self.rect.center)
 
                 # self.drawTrajectory(point1, point2, screen)
@@ -117,7 +118,7 @@ class Birds:
                 self.rect.centery = self.initRect.centery + (self.velocity[1]*(t-self.bounceTime) + 0.5*g*((t-self.bounceTime)**2))*scale
                 # print(self.rect)
                 # print("y velocity = ", self.velocity[1])
-                if (self.rect.bottom >= 930 and not self.ifBounced and t>=0.2) or self.ifCollideTop:
+                if (self.rect.bottom >= bottom and not self.ifBounced and t>=0.2) or self.ifCollideTop:
                     self.velocity[1] = -(self.velocity[1]+g*(t-self.bounceTime))*0.5
                     self.changeVelocity[1] = -(self.velocity[1]+g*(t-self.bounceTime))*0.5
                     self.bounceTime = (py.time.get_ticks()-self.startTime)/1000
@@ -134,19 +135,19 @@ class Birds:
                 
                 
             else:
-                self.rect.centerx = transformX(sling_rect.centerx+15-self.image.get_width()/2,playerNo)
-                self.rect.bottom = sling_rect.centery-30
+                self.rect.centerx = transformX(sling_rect.centerx+15-self.image.get_width()/2,playerNo,width)
+                self.rect.bottom = sling_rect.centery-height/36
         else:
-            self.rect.centerx = transformX((birdNo+1)*100+50-self.image.get_width()/2,playerNo)
-            self.rect.bottom = 930
+            self.rect.centerx = transformX((birdNo+1)*100*width/1920+width/38.4-self.image.get_width()/2,playerNo,width)
+            self.rect.bottom = bottom
 
 
-    def newPosition(time,speed):
-        g = 9.8
-        scale = 50
-        speed[1] += g*time
-        move = [speed[0]*time*scale,(speed[1]*time + 0.5*g*(time**2))*scale]
-        return move
+    # def newPosition(time,speed):
+    #     g = 9.8
+    #     scale = 50
+    #     speed[1] += g*time
+    #     move = [speed[0]*time*scale,(speed[1]*time + 0.5*g*(time**2))*scale]
+    #     return move
     
     def printInfo(self):
         print("Name = ",self.name)
@@ -156,14 +157,28 @@ class Birds:
     def addLaunchSound(self,sound):
         self.launchSound = sound
 
-red = Birds("Red",py.transform.scale_by(py.image.load("Media/Birds/red1.png"), 0.11),None,2,20,1,1,scaler(py.image.load("Media/Birds/red_avatar.png")))
-chuck = Birds("Chuck",py.transform.scale_by(py.image.load("Media/Birds/chuck1.png"), 0.3),"wood",4,15,1.5,0.75,scaler(py.image.load("Media/Birds/chuck_avatar.png")))
-bomb = Birds("Bomb",py.transform.scale_by(py.image.load("Media/Birds/bomb1.png"), 0.35),"stone",1,25,1.5,0.75,scaler(py.image.load("Media/Birds/bomb_avatar.png")))
-blue = Birds("Blue",py.transform.scale_by(py.image.load("Media/Birds/blue1.png"), 0.35),"ice",3,10,1.5,0.75,scaler(py.image.load("Media/Birds/blue_avatar.png")))
-stella = Birds("Stella",py.transform.scale_by(py.image.load("Media/Birds/stella1.png"), 0.42),None,2,20,2,0.5,scaler(py.image.load("Media/Birds/stella_avatar.png")))
+red = Birds("Red",py.transform.scale_by(py.image.load("Media/Birds/red1.png"), 0.11),None,2,20,1,1,scaler(py.image.load("Media/Birds/red_avatar.png")),(33.1,19.3))
+chuck = Birds("Chuck",py.transform.scale_by(py.image.load("Media/Birds/chuck1.png"), 0.3),"wood",4,15,1.5,0.75,scaler(py.image.load("Media/Birds/chuck_avatar.png")),(31.5,19.3))
+bomb = Birds("Bomb",py.transform.scale_by(py.image.load("Media/Birds/bomb1.png"), 0.35),"stone",1.5,25,1.5,0.75,scaler(py.image.load("Media/Birds/bomb_avatar.png")),(34.9,15.2))
+blue = Birds("Blue",py.transform.scale_by(py.image.load("Media/Birds/blue1.png"), 0.35),"ice",3,10,1.5,0.75,scaler(py.image.load("Media/Birds/blue_avatar.png")),(32.5,18.3))
+stella = Birds("Stella",py.transform.scale_by(py.image.load("Media/Birds/stella1.png"), 0.42),None,2,20,2,0.5,scaler(py.image.load("Media/Birds/stella_avatar.png")),(26.3,18.9))
 
 birdNames = ["red","chuck","bomb","blue","stella"]
 birds = [red,chuck,bomb,blue,stella]
+
+birdNos = {"Red":0,"Chuck":1,"Bomb":2,"Blue":3,"Stella":4}
+
+spaceBirds = []
+for i in range(5):
+    spaceBirds.append(scaler(py.image.load(f"Media/Birds/{birdNames[i]}_space.png")))
+
+ghostBirds = []
+for i in range(5):
+    ghostBirds.append(scaler(py.image.load(f"Media/Birds/{birdNames[i]}_ghost.png")))
+
+samuraiBirds = []
+for i in range(5):
+    samuraiBirds.append(scaler(py.image.load(f"Media/Birds/{birdNames[i]}_samurai.png")))
 
 for i in range(5):
     birds[i].addLaunchSound(f"Media/audio/{birdNames[i]}_launch.mp3")

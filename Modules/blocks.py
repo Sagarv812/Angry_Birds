@@ -3,7 +3,7 @@ import pygame as py
 import Modules.settings as settings
 
 def scaler(block):
-    return py.transform.scale(block,(90,90))
+    return py.transform.scale(block,(settings.width/21.3,settings.width/21.3))
 
 class Block:
 
@@ -18,20 +18,20 @@ class Block:
     
     def returnImg(self):
         if self.health>48:
-            self.rect = self.img1.get_rect()
-            return self.img1
+            self.rect = scaler(self.img1).get_rect()
+            return scaler(self.img1)
         elif self.health>36:
-            self.rect = self.img2.get_rect()
-            return self.img2
+            self.rect = scaler(self.img2).get_rect()
+            return scaler(self.img2)
         elif self.health>24:
-            self.rect = self.img3.get_rect()
-            return self.img3
+            self.rect = scaler(self.img3).get_rect()
+            return scaler(self.img3)
         elif self.health>12:
-            self.rect = self.img4.get_rect()
-            return self.img4
+            self.rect = scaler(self.img4).get_rect()
+            return scaler(self.img4)
         elif self.health>0:
-            self.rect = self.img5.get_rect()
-            return self.img5
+            self.rect = scaler(self.img5).get_rect()
+            return scaler(self.img5)
         else:
             return None
         

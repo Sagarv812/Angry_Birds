@@ -32,7 +32,8 @@ bg = pygame.image.load("Media/Menu_background.jpg")
 
 currentBg = None
 currentBgm = None
-
+theme = None
+bottom = 0
 
 
 red = pygame.image.load("Media/Birds/red1.png")
@@ -77,4 +78,5 @@ bg3 = pygame.image.load("Media/samurai_theme.png")
 bgm1 = pygame.mixer.Sound("Media/audio/space_bgm.mp3")
 bgm2 = pygame.mixer.Sound("Media/audio/spooky_bgm.mp3")
 bgm3 = pygame.mixer.Sound("Media/audio/samurai_bgm.mp3")
+
 
