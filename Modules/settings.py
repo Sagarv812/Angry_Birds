@@ -1,14 +1,19 @@
-import pygame, sys, time
+import pygame
 
+#Initializing global variables
 size = width, height = 1920, 1080
 flags = pygame.FULLSCREEN
 black = 0, 0, 0
 GRAY = (200, 200, 200)
 WHITE = (255, 255, 255)
 ifAudio = True
+
+#Player names
 player1 = "Player 1"
 player2 = "Player 2"
+
 bigFont = pygame.font.Font("Media/angrybirds-regular.ttf", 100)
+
 RED = (185,15,18)
 YELLOW = (251,204,22)
 BLUE = (11, 76, 227)
@@ -19,16 +24,13 @@ STONE_GRAY = (161,153,140)
 ICE_BLUE = (119,209,244)
 DARK_GRAY = (31,31,31)
 ROPE_BROWN = (48,22,8)
+
 state = "load"
 winner = "PLAYER1"
 pauseTime = 0
 
 sfxVolume = 0.75
 musicVolume = 0.75
-
-clock = pygame.time.Clock()
-
-bg = pygame.image.load("Media/Menu_background.jpg")
 
 currentBg = None
 currentBgm = None
@@ -42,6 +44,7 @@ bomb = pygame.image.load("Media/Birds/bomb1.png")
 blue = pygame.image.load("Media/Birds/blue1.png")
 stella = pygame.image.load("Media/Birds/stella1.png")
 
+#Initializing block images (for different stages of damage)
 WOOD = [
     pygame.image.load("Media/Blocks/woodblock1.png"),
     pygame.image.load("Media/Blocks/woodblock2.png"),
@@ -66,6 +69,8 @@ STONE = [
     pygame.image.load("Media/Blocks/stone5.png")
 ]
 
+#Initializing global sounds
+bg = pygame.image.load("Media/Menu_background.jpg")
 
 buttonHoverSound = pygame.mixer.Sound("Media/audio/button_hover.mp3")
 

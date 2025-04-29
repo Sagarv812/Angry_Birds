@@ -2,9 +2,11 @@ import numpy
 import pygame as py
 import Modules.settings as settings
 
+#Scales the block
 def scaler(block):
     return py.transform.scale(block,(settings.width/21.3,settings.width/21.3))
 
+#Blocks class containing all info about blocks
 class Block:
 
     def __init__(self, name, health, img1, img2, img3, img4, img5):
@@ -16,6 +18,7 @@ class Block:
         self.img4 = img4
         self.img5 = img5
     
+    #Returns an image depending on damage level
     def returnImg(self):
         if self.health>48:
             self.rect = scaler(self.img1).get_rect()
@@ -41,7 +44,7 @@ class Block:
     def clone(self):
         return Block(self.name, self.health,self.img1,self.img2,self.img3,self.img4,self.img5)
     
-        
+#Initializing block objects (wood, ice and stone)
 wood = Block("wood",60,scaler(settings.WOOD[0]),scaler(settings.WOOD[1]),scaler(settings.WOOD[2]),scaler(settings.WOOD[3]),scaler(settings.WOOD[4]))
 ice = Block("ice",60,scaler(settings.ICE[0]),scaler(settings.ICE[1]),scaler(settings.ICE[2]),scaler(settings.ICE[3]),scaler(settings.ICE[4]))
 stone = Block("stone",60,scaler(settings.STONE[0]),scaler(settings.STONE[1]),scaler(settings.STONE[2]),scaler(settings.STONE[3]),scaler(settings.STONE[4]))

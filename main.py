@@ -1,27 +1,20 @@
-import pygame, numpy, sys, time
-import Modules.birds as bird
-import Modules.flying_mechanism as fly
-import Modules.settings as settings
-import Modules.loading_screen as load
-import Modules.player_names as Players
-import Main_Menu as menu
-import Modules.bird_select as selection
-import Modules.players as People
-import Modules.play as Play
-import Modules.winner as Winner
-import Modules.theme_select as Theme
-import random
+import pygame
 
 pygame.init()
 
+import Modules.settings as settings
+import Modules.loading_screen as load
+import Modules.player_names as Players
+import Modules.Main_Menu as menu
+import Modules.bird_select as selection
+import Modules.play as Play
+import Modules.winner as Winner
+import Modules.theme_select as Theme
+
+
 info = pygame.display.Info()
-size = width, height = 1920, 1080
-screen = pygame.display.set_mode((info.current_w,info.current_h),settings.flags)
+screen = pygame.display.set_mode((info.current_w,info.current_h),settings.flags) #Initializing Display
 pygame.display.set_caption("ANGRY BIRDS")
-# red = pygame.image.load(bird.birds["Red"][0])
-# red = ScaleImage(red)
-# birdrect = red.get_rect()
-# birdrect.topleft = (500,500)
 
 clock = pygame.time.Clock()
 

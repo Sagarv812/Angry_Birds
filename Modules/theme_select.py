@@ -2,6 +2,8 @@ import pygame as py
 import Modules.settings as settings
 import sys
 
+
+#Mask to make the rectangular images have rounded edges
 def returnRoundedSurface(img):
     surface = py.Surface(img.get_size(), py.SRCALPHA)
     surface.fill((0,0,0,0))
@@ -24,6 +26,7 @@ def selectTheme(screen):
     backButtonRect = backButton_init.get_rect()
     backButtonRect.bottomleft = (settings.width/10,settings.height*9/10)
 
+    #Initializing themes, theme songs and positions
     th1 = py.transform.scale(settings.bg1, (settings.width/3, settings.height/3))
     th2 = py.transform.scale(settings.bg2, (settings.width/3, settings.height/3))
     th3 = py.transform.scale(settings.bg3, (settings.width/3, settings.height/3))
@@ -48,27 +51,12 @@ def selectTheme(screen):
     th2Hover = False
     th3Hover = False
 
-    roundedSurface1 = py.Surface((settings.width/3, settings.height/3), py.SRCALPHA)
-    roundedSurface1.fill((0,0,0,0))
-    mask = py.Surface(th1.get_size(), py.SRCALPHA)
-    mask.fill((0,0,0,0))
-    py.draw.rect(mask, (255,255,255), (0,0,th1.get_width(), th1.get_height()), border_radius=30)
-    roundedSurface1.blit(th1, (0,0))
-    roundedSurface1.blit(mask, (0,0), special_flags=py.BLEND_RGBA_MIN)
-
     backHover = False
     hoverSound = settings.buttonHoverSound
     hoverSound.set_volume(settings.sfxVolume)
     clickSound = settings.buttonClickSound
     clickSound.set_volume(settings.sfxVolume)
-    # roundedSurface2 = py.Surface((settings.width/3, settings.height/3), py.SRCALPHA)
-    # py.draw.rect(roundedSurface2, (255,255,255), rounded_rect, border_radius=30)
-    # roundedSurface2.blit(th2, (0,0))
     
-
-    # roundedSurface3 = py.Surface((settings.width/3, settings.height/3), py.SRCALPHA)
-    # py.draw.rect(roundedSurface3, settings.WHITE, rounded_rect, border_radius=30)
-    # roundedSurface3.blit(th3,(0,0))
 
 
     while True:
@@ -78,6 +66,8 @@ def selectTheme(screen):
             if event.type == py.QUIT: sys.exit()
 
             if event.type == py.MOUSEBUTTONDOWN:
+
+                #Checking if user clicked on any themes/back button
                 if th1_rect.collidepoint(event.pos):
                     settings.currentBg = settings.bg1
                     settings.currentBgm = settings.bgm1
@@ -101,7 +91,7 @@ def selectTheme(screen):
                     clickSound.play()
                     return
 
-
+        #If mouse hover, enlarge
         mouse_pos = py.mouse.get_pos()
         if th1_rect.collidepoint(mouse_pos):
             multiplier[0] = 1.2
@@ -135,6 +125,7 @@ def selectTheme(screen):
         backButtonRect = backButton.get_rect()
         backButtonRect.bottomleft = (settings.width/10,settings.height*9/10)
 
+        #Displaying on screen
         screen.blit(bg, (0,0))
         screen.blit(chooseText, chooseText_rect)
         screen.blit(returnRoundedSurface(th1_final), th1_rect)
@@ -142,6 +133,7 @@ def selectTheme(screen):
         screen.blit(returnRoundedSurface(th3_final), th3_rect)
         screen.blit(backButton,backButtonRect)
 
+        #Playing respective theme music when mouse hover
         if multiplier[0] == 1.2:
             py.draw.rect(screen, settings.ICE_BLUE, th1_rect, width=15, border_radius=30)
             if not th1Hover:

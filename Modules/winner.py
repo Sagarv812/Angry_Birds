@@ -21,7 +21,7 @@ def winnerAnimation(screen):
     stars_rect = stars.get_rect()
     bg = py.transform.scale(settings.bg, screen.get_size())
 
-    py.mixer.music.stop()
+    py.mixer.stop()
     py.mixer.music.load("Media/audio/game_complete.mp3")
     py.mixer.music.play(-1)
     py.mixer.music.set_volume(settings.musicVolume)

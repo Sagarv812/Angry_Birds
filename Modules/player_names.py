@@ -3,13 +3,15 @@ import Modules.settings as settings
 import Modules.players as Players
 
 def naming(screen):
+
+    #Rendering text
     p1 = settings.bigFont.render("PLAYER 1", True, (0,0,0))
     p2 = settings.bigFont.render("PLAYER 2", True, (0,0,0))
     p1 = py.transform.scale(p1, (settings.width/3.5,settings.height/6.2))
     p2 = py.transform.scale(p2, (settings.width/3.5,settings.height/6.2))
-    w = p2.get_width()
-    h = p2.get_height()
 
+
+    #Rendering Images
     vs = py.image.load("Media/versus1.png")
     vs = py.transform.scale(vs, (settings.width/5.12,settings.height/2.9))
     vs_rect = vs.get_rect()
@@ -21,7 +23,7 @@ def naming(screen):
     backButtonRect.center = (settings.width/5.13, settings.height/1.2)
     
 
-    font = py.font.SysFont("ubuntu", int(settings.width/24))
+    font = py.font.SysFont("latinmodernmono", int(settings.width/23))
     fontSmaller = py.font.Font("Media/angrybirds-regular.ttf", int(settings.width/32))
 
     bg = py.image.load("Media/Menu_background.jpg")
@@ -30,6 +32,7 @@ def naming(screen):
     box_width = settings.width/3.85
     box_height = settings.height/11
 
+    #Rendering input box
     input_box1 = py.Rect(10, 10, box_width, box_height)
     input_box1.center = (settings.width/5.13, settings.height/3.17)
     input_box2 = py.Rect(10, 10, box_width, box_height)
@@ -42,6 +45,7 @@ def naming(screen):
     active2 = False
     done = [False, False]
 
+    #Dims background to highlight the foreground
     dim_surface = py.Surface((screen.get_size()), py.SRCALPHA)
     dim_surface.fill((0, 0, 0, 180))
 
@@ -65,6 +69,8 @@ def naming(screen):
             if event.type == py.QUIT: sys.exit()
 
             elif event.type == py.MOUSEBUTTONDOWN:
+
+                #Checks if names are entered and then does further action accordingly
                 if done != [True, True]:
                     if input_box1.collidepoint(event.pos):
                         settings.buttonClickSound.set_volume(settings.sfxVolume)
@@ -93,7 +99,7 @@ def naming(screen):
                     elif back.collidepoint(event.pos):
                         done = [False, False]
 
-
+            #Takes the name input and stores it in Player name
             elif event.type == py.KEYDOWN:
                 if active1:
                     if event.key == py.K_RETURN:
@@ -140,10 +146,11 @@ def naming(screen):
         else:
             hoverPlay = False
 
+
+        #Displaying objects on screen
         screen.fill(settings.black)
         screen.blit(bg, (0,0))
         screen.blit(p1, (settings.width/19.2, settings.height/10.8))
-        # screen.blit(p2, (settings.width-100-w, settings.height-100-h))
         screen.blit(p2, (settings.width/1.5, settings.height/1.35))
         
         p1_textSurface = font.render(text1, True, color1)
@@ -167,6 +174,7 @@ def naming(screen):
         backButtonRect.center = (settings.width/5, settings.height/1.2)
         screen.blit(backButton, backButtonRect)
 
+        #Popup confirmation box
         if (done == [True, True]):
             screen.blit(dim_surface, (0, 0))
             py.draw.rect(screen, settings.YELLOW, popup, border_radius=20)

@@ -1,5 +1,4 @@
 import pygame as py, sys, time
-import os
 import Modules.settings as settings
 
 clock = py.time.Clock()
@@ -16,8 +15,6 @@ def loadScreen(screen):
     BORDER_COLOUR = (255, 255, 255)
 
     #Positioning
-    image_x = int(settings.width/2-w/2)
-    image_y = int(settings.height/2-h/2)
     logo_rect = logo.get_rect()
     logo_rect.center = (settings.width/2,settings.height/3)
     bar_size = (settings.width/4, settings.height/20)

@@ -9,14 +9,14 @@ def chooseBird(screen, pNo):
     if settings.ifAudio:
         settings.currentBgm.play(-1)
         settings.currentBgm.set_volume(settings.musicVolume)
-
+    
+    #Initializing texts
     if pNo==1:
         playerName = settings.bigFont.render(f'{Players.Player1.getName()}, SELECT BIRDS', True, settings.RED)
     else:
         playerName = settings.bigFont.render(f"{Players.Player2.getName()}, SELECT BIRDS", True, settings.RED)
 
     playerName = py.transform.scale_by(playerName, w/1920)
-    font = py.font.SysFont("ubuntu",int(settings.width/32))
     playerName_rect = playerName.get_rect()
     playerName_rect.center = (settings.width/2, settings.height/10.8)
     instructions1 = settings.bigFont.render("CHOOSE UPTO 3 BIRDS", True, settings.RED)
@@ -25,6 +25,8 @@ def chooseBird(screen, pNo):
     instructions1_rect = instructions1.get_rect()
     instructions1_rect.center = (settings.width/2, settings.height/5.4)
 
+
+    #Initializing bird images and initalizing positions
     red_init = py.transform.scale(settings.red, (settings.width/6.5, settings.height/3.8))
     red_rect = red_init.get_rect()
     chuck_init = py.transform.scale(settings.chuck, (settings.width/6.3, settings.height/3.8))
@@ -43,15 +45,18 @@ def chooseBird(screen, pNo):
     blue_center = (w/2.75, h/1.35)
     stella_center = (w/1.6, h/1.4)
 
-    box = py.Rect(80, 80, max(w/2,playerName.width), h/4.7)
+    #Initializing text box
+    box = py.Rect(80, 80, max(w/2,playerName.get_width()), h/4.7)
     box.centerx = settings.width/2
     box.top = playerName_rect.top - h/54
 
+    #Initializing back button
     backButtonInit = py.image.load("Media/back.png")
     backButtonInit = py.transform.scale(backButtonInit, (w/7.7,h/8.7))
     backButtonRect = backButtonInit.get_rect()
     backButtonRect.topleft = (w/38.4,h/21.6)
 
+    #Info of the birds to be displayed
     birdsInfo = [
         ("RED","does equal damage to all blocks"),
         ("CHUCK","does more damage to wood blocks and less to others"),
@@ -77,6 +82,7 @@ def chooseBird(screen, pNo):
     dim_surface = py.Surface(screen.get_size(), py.SRCALPHA)
     dim_surface.fill((0, 0, 0, 180))
 
+    #Initializing blocks for Stella
     wood = py.transform.scale(settings.WOOD[0], (settings.width/30,settings.width/30))
     wood_rect= wood.get_rect()
     stone = py.transform.scale(settings.STONE[0], (settings.width/30,settings.width/30))
@@ -89,7 +95,8 @@ def chooseBird(screen, pNo):
     blocks["ice"] = ice
     blocks["stone"] = stone
 
-
+    
+    #Initializing text for blocks
     wood_text = settings.bigFont.render("WOOD", True, settings.WOOD_BROWN)
     wood_text = py.transform.scale_by(wood_text, w/5485.7)
     wood_text_rect = wood_text.get_rect()
@@ -118,7 +125,7 @@ def chooseBird(screen, pNo):
                 if backButtonRect.collidepoint(event.pos):
                     settings.state = "theme"
                     return
-                elif next_rect.collidepoint(event.pos):
+                elif next_rect.collidepoint(event.pos) and sum(selectBirds)>0:
                     settings.state = "play"
                     for i in range(5):
                         if selectBirds[i]:
@@ -131,6 +138,7 @@ def chooseBird(screen, pNo):
 
                 else:
 
+                    #Checking if user clicked on any block during Stella selection. Changing affinity accordingly
                     if stellaSelect:
                         if wood_rect.collidepoint(event.pos):
                             Birds.stella.changeAffinity("wood")
@@ -179,6 +187,7 @@ def chooseBird(screen, pNo):
                 else:
                     birdsMultiplier[i] = 1.2
 
+        #Resizing and positioning of birds
         red = py.transform.scale_by(red_init, birdsMultiplier[0])
         red_rect = red_init.get_rect()
         chuck = py.transform.scale_by(chuck_init, birdsMultiplier[1])
@@ -197,7 +206,8 @@ def chooseBird(screen, pNo):
         stella_rect.center = stella_center
 
         birdRects = [red_rect, chuck_rect, bomb_rect, blue_rect, stella_rect]
-
+        
+        #Displaying on screen
         screen.fill(settings.black)
         screen.blit(py.transform.scale(settings.currentBg, screen.get_size()), (0,0))
         py.draw.rect(screen, settings.YELLOW, box, border_radius=15)
@@ -214,7 +224,8 @@ def chooseBird(screen, pNo):
             if selectBirds[i]:
                 tick_rect.topleft = birdRects[i].topleft
                 screen.blit(tick, tick_rect)
-
+        
+        #Displaying info next to cursor when hover over bird
         for i in range(5):
             if birdsMultiplier[i] == 1.2:
                 birdName = settings.bigFont.render(birdsInfo[i][0], True, colours[i])
@@ -240,6 +251,7 @@ def chooseBird(screen, pNo):
                 screen.blit(birdName, birdName_rect)
                 screen.blit(birdText, birdText_rect)
 
+        #Additional options when selecting Stella as specified in rules
         if stellaSelect:
             screen.blit(dim_surface, (0,0))
             screen.blit(stella, stella_rect)
