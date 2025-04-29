@@ -6,7 +6,6 @@ def winnerAnimation(screen):
     scale = 2
     winnerName = settings.bigFont.render(settings.winner+"  WINS!!",True,settings.RED)
     winnerName = py.transform.scale(winnerName, (settings.width/scale, settings.height/(scale*3.22)))
-    print(winnerName.get_size())
     winnerName_rect = winnerName.get_rect()
     bird = settings.red
     scale = 4
@@ -33,12 +32,22 @@ def winnerAnimation(screen):
     stars_rect.centerx = crown_rect.centerx
     winnerName_rect.centerx = stars_rect.centerx
     winnerName_rect.centery = bird_rect.bottom+settings.height/10
-    print(crown.get_size())
+
+    quit_init = py.image.load("Media/quit.png")
+    quit_init = py.transform.scale(quit_init, (settings.width/7.7,settings.height/10))
+    quit_rect = quit_init.get_rect()
+
 
     while True:
+        
+        multiplier = 1
 
         for event in py.event.get():
             if event.type == py.QUIT: sys.exit()
+
+            if event.type == py.MOUSEBUTTONDOWN:
+                if quit_rect.collidepoint(event.pos):
+                    sys.exit()
 
         
         screen.blit(bg, (0,0))
@@ -48,5 +57,13 @@ def winnerAnimation(screen):
         screen.blit(winnerName,winnerName_rect)
         screen.blit(stars,stars_rect)
 
+        if quit_rect.collidepoint(py.mouse.get_pos()):
+            multiplier = 1.2
+
+        quit = py.transform.scale_by(quit_init, multiplier)
+        quit_rect = quit.get_rect()
+        quit_rect.center = (settings.width/1.1, settings.height/1.1)
+
+        screen.blit(quit, quit_rect)
 
         py.display.flip()

@@ -18,6 +18,9 @@ def rotateImg(self,playerNo):
 def scaler(img):
     return py.transform.scale(img, (300,280))
 
+def scalerEagle(img):
+    return py.transform.scale(img, (200,200))
+
 class Birds:
 
     def __init__(self, name, image, affinity, speed, baseDamage, damageMultiplier, damageDivider, avatarImg, scaleFactor):
@@ -135,7 +138,7 @@ class Birds:
                 
                 
             else:
-                self.rect.centerx = transformX(sling_rect.centerx+15-self.image.get_width()/2,playerNo,width)
+                self.rect.centerx = transformX(sling_rect.centerx+width/128-self.image.get_width()/2,playerNo,width)
                 self.rect.bottom = sling_rect.centery-height/36
         else:
             self.rect.centerx = transformX((birdNo+1)*100*width/1920+width/38.4-self.image.get_width()/2,playerNo,width)
@@ -182,6 +185,10 @@ for i in range(5):
 
 for i in range(5):
     birds[i].addLaunchSound(f"Media/audio/{birdNames[i]}_launch.mp3")
+
+eagle1 = scalerEagle(py.image.load("Media/Birds/eagle_ghost.png"))
+eagle2 = scalerEagle(py.image.load("Media/Birds/eagle_space.png"))
+eagle3 = scalerEagle(py.image.load("Media/Birds/eagle_samurai.png"))
 
 
 

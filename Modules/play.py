@@ -201,7 +201,21 @@ def displayBlocks(screen, blocks, playerNo):
                     block_rect.centery = int(settings.bottom-block.get_width()/2-block.get_height()*i)
                     screen.blit(block,block_rect)
 
+def rotateBlocks(screen, blocks, blocksNo):
+    for i in range(4):
+        for j in range(2):
+            if blocks[i][j] is not None and blocks[i][j].health<=0:
+                if i<=2 and blocks[i+1][j] is not None:
+                    for k in range(i+1,4):
+                        if blocks[k][j] is None:
+                            blocks[k-1][j] = None
+                        else:
+                            blocks[k-1][j] = blocks[k][j].clone()
+                    blocks[3][j] = None
+                else:
+                    blocks[i][j] = None
 
+                displayBlocks(screen, blocks, blocksNo)
 
 def playGame(screen):
     py.mixer.stop()
@@ -220,10 +234,24 @@ def playGame(screen):
 
     if settings.theme == "ghost":
         settings.bottom = settings.height/1.2
+        r,g,b = settings.GRAY
+        eagle = py.transform.scale_by(Birds.eagle1,settings.width/1920)
     elif settings.theme == "space":
         settings.bottom = settings.height/1.14
+        r,g,b = settings.ICE_BLUE
+        eagle = py.transform.scale_by(Birds.eagle2,settings.width/1920)
     elif settings.theme == "samurai":
         settings.bottom = settings.height/1.18
+        r,g,b = settings.YELLOW
+        eagle = py.transform.scale_by(Birds.eagle3,settings.width/1920)
+    eagle_rect = eagle.get_rect()
+
+
+    maxFreq = 10
+    vibrationAmplitude = 5
+    vibrationDuration = 3.5
+    ballMaxRadius = int(30*settings.width/1920)
+    lineWidth = int(20*settings.width/1920)
 
     
     # start_size = 3000
@@ -298,6 +326,7 @@ def playGame(screen):
     backImg_rect = backImg.get_rect()
 
     
+    
 
     while True:
 
@@ -315,11 +344,25 @@ def playGame(screen):
 
             if state=="player1":
                 if event.type == py.MOUSEBUTTONDOWN:
-                    if birdsPlay1[3].rect.collidepoint(event.pos) and birdsPlay1[3].ifLaunched == False:
-                        birdsPlay1[3].ifDragging = True
-                        py.mixer.music.load("Media/audio/sling_pull-2.mp3")
-                        py.mixer.music.play(loops=0)
-                        py.mixer.music.set_volume(settings.sfxVolume)
+                    if event.button == 1:
+                        if birdsPlay1[3].rect.collidepoint(event.pos) and birdsPlay1[3].ifLaunched == False:
+                            birdsPlay1[3].ifDragging = True
+                            py.mixer.music.load("Media/audio/sling_pull-2.mp3")
+                            py.mixer.music.play(loops=0)
+                            py.mixer.music.set_volume(settings.sfxVolume)
+                    elif event.button == 3:
+                        if birdsPlay1[3].ifLaunched == True and birdsPlay1[3].ifCollided == False:
+                            py.mixer.stop()
+                            currentCenter = py.Vector2(*birdsPlay1[3].rect.center)
+                            angle = math.degrees(math.atan2(-birdsPlay1[3].changeVelocity.y, birdsPlay1[3].changeVelocity.x))
+                            direction = birdsPlay1[3].changeVelocity.normalize()
+                            eagleStart = py.time.get_ticks()/1000
+                            birdsPlay1[3] = None
+                            birdNos1[3] = -1
+                            state = "p1ability"
+                            py.mixer.music.load("Media/audio/laser_charge.mp3")
+                            py.mixer.music.set_volume(settings.sfxVolume)
+                            py.mixer.music.play()
 
 
                 elif event.type == py.MOUSEBUTTONUP:
@@ -336,11 +379,26 @@ def playGame(screen):
 
             elif state=="player2":
                 if event.type == py.MOUSEBUTTONDOWN:
-                    if birdsPlay2[3].rect.collidepoint(event.pos) and birdsPlay2[3].ifLaunched == False:
-                        birdsPlay2[3].ifDragging = True
-                        py.mixer.music.load("Media/audio/sling_pull-2.mp3")
-                        py.mixer.music.play(loops=0)
-                        py.mixer.music.set_volume(settings.sfxVolume)
+                    if event.button == 1:
+                        if birdsPlay2[3].rect.collidepoint(event.pos) and birdsPlay2[3].ifLaunched == False:
+                            birdsPlay2[3].ifDragging = True
+                            py.mixer.music.load("Media/audio/sling_pull-2.mp3")
+                            py.mixer.music.play(loops=0)
+                            py.mixer.music.set_volume(settings.sfxVolume)
+
+                    elif event.button == 3:
+                        if birdsPlay2[3].ifLaunched == True and birdsPlay2[3].ifCollided == False:
+                            py.mixer.stop()
+                            currentCenter = py.Vector2(*birdsPlay2[3].rect.center)
+                            angle = math.degrees(math.atan2(-birdsPlay2[3].changeVelocity.y, birdsPlay2[3].changeVelocity.x))
+                            direction = birdsPlay2[3].changeVelocity.normalize()
+                            eagleStart = py.time.get_ticks()/1000
+                            birdsPlay2[3] = None
+                            birdNos2[3] = -1
+                            state = "p2ability"
+                            py.mixer.music.load("Media/audio/laser_charge.mp3")
+                            py.mixer.music.set_volume(settings.sfxVolume)
+                            py.mixer.music.play()
 
                 elif event.type == py.MOUSEBUTTONUP:
                     if birdsPlay2[3].ifDragging:
@@ -432,7 +490,7 @@ def playGame(screen):
                 state = "player1"
 
         elif state == "player1":
-            if Players.Player1.score >= 480:
+            if Players.Player2.score >= 480:
                 settings.state = "winner"
                 settings.winner = Players.Player2.name
                 return
@@ -447,7 +505,7 @@ def playGame(screen):
 
 
             if birdsPlay1[3].ifLaunched:
-                if checkBounds(birdsPlay1[3].rect) or (birdsPlay1[3].changeVelocity.magnitude()<20 and birdsPlay1[3].rect.bottom>920):
+                if checkBounds(birdsPlay1[3].rect) or (birdsPlay1[3].changeVelocity.magnitude()<(20*settings.width/1920) and birdsPlay1[3].rect.bottom>settings.bottom):
                     score = 0
                     state = "p1score"
                     scoreTime = py.time.get_ticks()/1000
@@ -592,13 +650,152 @@ def playGame(screen):
                     state = "p2score"
                     scoreTime = py.time.get_ticks()/1000
 
+        elif state == "p1ability":
+
+            displayBirds(screen, 1, birdNos1, sling_rect, birdsPlay1)
+            
+            displayBlocks(screen, blocks1, 2)
+            
+            displayAvatar(screen, birdNos1, birds1, birdNos2, birds2,1)
+
+            displayScore(screen, score1, score2,1)
+            
+            eagle_rotated = py.transform.rotate(eagle,angle)
+
+            t = py.time.get_ticks()/1000 - eagleStart
+            
+            origin = currentCenter + direction*eagle_rotated.get_width()/2
+            laser_surf = py.Surface(screen.get_size(), py.SRCALPHA)
+            beam_length = (py.time.get_ticks()/1000 - eagleStart - vibrationDuration - 1)*400*settings.width/1920
+            end_pos = origin + direction*beam_length
+            glow_width = random.randint(lineWidth+5,lineWidth+int(15*settings.width/1920))
+
+            if t<vibrationDuration:
+                t1 = t/vibrationDuration
+                freq = t1**3 * maxFreq
+                theta = math.sin(t * freq * 2 * math.pi)*vibrationAmplitude
+                radius = t1**3 * ballMaxRadius
+            elif t-vibrationDuration<=0.1:
+                time.sleep(1)
+            else:
+                theta = 0
+                
+                radius = ballMaxRadius
+
+                py.draw.line(laser_surf, (r,g,b,128), origin, end_pos, glow_width)
+                
+                py.draw.line(screen, (r,g,b), origin, end_pos, lineWidth)
+            
+            eagle_final = py.transform.rotate(eagle_rotated,theta)
+            glow_radius = random.randint(int(radius),int(radius)+10)
+            py.draw.circle(screen, (r,g,b), (int(origin.x),int(origin.y)),int(radius))
+            py.draw.circle(laser_surf, (r,g,b,128), (int(origin.x),int(origin.y)),glow_radius)
+            eagle_rect = eagle_final.get_rect(center=currentCenter)
+            screen.blit(eagle_final,eagle_rect)
+            screen.blit(laser_surf, (0,0))
+
+            for _ in range(10):
+                angle1 = random.uniform(-30, 30)
+                spark_dir = direction.rotate(angle1) * random.uniform(2, 4)
+                spark_pos = origin + spark_dir * random.uniform(2, 10)
+                py.draw.circle(screen, (r,g,b), spark_pos, 2)
+
+
+            for i in range(4):
+                for j in range(2):
+                    if blocks1[i][j] is not None:
+                        if (blocks1[i][j].rect.collidepoint(end_pos)):
+                            py.draw.rect(screen,settings.WHITE,blocks1[i][j].rect,width=20)
+                            score += blocks1[i][j].health
+                            Players.Player1.score += blocks1[i][j].health
+                            blocks1[i][j].health = 0
+                            displayBlocks(screen, blocks1, 2)
+
+            if t>8:
+                for i in range(3):
+                    rotateBlocks(screen, blocks1, 2)
+                scoreTime = py.time.get_ticks()/1000
+                state = "p1score"
+
+            
+
+        elif state == "p2ability":
+            displayBirds(screen, 2, birdNos2, sling_rect, birdsPlay2)
+            
+            displayBlocks(screen, blocks2, 1)
+            
+            displayAvatar(screen, birdNos1, birds1, birdNos2, birds2,1)
+
+            displayScore(screen, score1, score2, 2)
+
+            eagle_rotated = py.transform.flip(py.transform.rotate(py.transform.flip(eagle,True,False),angle),True,True)
+
+            t = py.time.get_ticks()/1000 - eagleStart
+            
+            origin = currentCenter + direction*eagle_rotated.get_width()/2
+            laser_surf = py.Surface(screen.get_size(), py.SRCALPHA)
+            beam_length = (py.time.get_ticks()/1000 - eagleStart - vibrationDuration - 1)*400*settings.width/1920
+            end_pos = origin + direction*beam_length
+            glow_width = random.randint(lineWidth+5,lineWidth+int(15*settings.width/1920))
+
+            if t<vibrationDuration:
+                t1 = t/vibrationDuration
+                freq = t1**3 * maxFreq
+                theta = math.sin(t * freq * 2 * math.pi)*vibrationAmplitude
+                radius = t1**3 * ballMaxRadius
+            elif t-vibrationDuration<=0.1:
+                time.sleep(1)
+            else:
+                theta = 0
+                
+                radius = ballMaxRadius
+
+                py.draw.line(laser_surf, (r,g,b,128), origin, end_pos, glow_width)
+                
+                py.draw.line(screen, (r,g,b), origin, end_pos, lineWidth)
+            
+            eagle_final = py.transform.rotate(eagle_rotated,theta)
+            glow_radius = random.randint(int(radius),int(radius)+10)
+            py.draw.circle(screen, (r,g,b), (int(origin.x),int(origin.y)),int(radius))
+            py.draw.circle(laser_surf, (r,g,b,128), (int(origin.x),int(origin.y)),glow_radius)
+            eagle_rect = eagle_final.get_rect(center=currentCenter)
+            screen.blit(eagle_final,eagle_rect)
+            screen.blit(laser_surf, (0,0))
+
+            for _ in range(10):
+                angle1 = random.uniform(-30, 30)
+                spark_dir = direction.rotate(angle1) * random.uniform(2, 4)
+                spark_pos = origin + spark_dir * random.uniform(2, 10)
+                py.draw.circle(screen, (r,g,b), spark_pos, 2)
+
+
+            for i in range(4):
+                for j in range(2):
+                    if blocks2[i][j] is not None:
+                        if (blocks2[i][j].rect.collidepoint(end_pos)):
+                            py.draw.rect(screen,settings.WHITE,blocks2[i][j].rect,width=20)
+                            score += blocks2[i][j].health
+                            Players.Player2.score += blocks2[i][j].health
+                            blocks2[i][j].health = 0
+                            displayBlocks(screen, blocks2, 1)
+
+            if t>8:
+                for i in range(3):
+                    rotateBlocks(screen, blocks2, 1)
+                scoreTime = py.time.get_ticks()/1000
+                state = "p2score"
+
+
 
         elif state == "p1score":
+            if not py.mixer.get_busy():
+                bgm.play(-1)
             t = py.time.get_ticks()/1000-scoreTime
             if t >= 1:
                 rotateBirds(birdNos1,birdsPlay1)
                 # time.sleep(1)
                 state = "player2"
+                score = 0
             displayScore(screen, score1, score2, ifAdding=True)
             displayAvatar(screen, birdNos1, birds1, birdNos2,birds2)
             displayBlocks(screen, blocks1, 2)
@@ -613,6 +810,8 @@ def playGame(screen):
             
 
         elif state == "p2score":
+            if not py.mixer.get_busy():
+                bgm.play(-1)
             t = py.time.get_ticks()/1000-scoreTime
             if t >= 1:
                 if any(x != -1 for x in birdNos1):
@@ -629,7 +828,8 @@ def playGame(screen):
                     #     if birdsPlay2[i] is None: continue
                     #     else:
                     #         birdsPlay2[i].printInfo()
-                    state = "player1"
+                    
+                    
                 else:
                     birdNos1 = [random.randint(0,Players.Player1.getBirdsNo()-1) for _ in range(4)] #Initializing birds
                     birdsPlay1 = [birds1[x].clone() for x in birdNos1]
@@ -637,8 +837,9 @@ def playGame(screen):
                     birdNos2 = [random.randint(0,Players.Player2.getBirdsNo()-1) for _ in range(4)]
                     birdsPlay2 = [birds2[x].clone() for x in birdNos2]
 
-                    state = "player1"
+                    
                 # time.sleep(1)
+                score = 0
                 state = "player1"
             displayScore(screen, score1, score2, ifAdding=True)
             displayAvatar(screen, birdNos1, birds1, birdNos2,birds2)
