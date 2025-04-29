@@ -1,4 +1,3 @@
-import numpy
 import pygame as py
 import Modules.settings as settings
 

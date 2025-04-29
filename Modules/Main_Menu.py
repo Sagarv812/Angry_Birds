@@ -18,7 +18,6 @@ def returnScale(startTime):
 
 def menu(screen):
     py.mixer.stop()
-    print(settings.width)
 
     #Logo
     logo_init = py.image.load("Media/logo.png")
