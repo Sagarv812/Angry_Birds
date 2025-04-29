@@ -28,6 +28,7 @@ ROPE_BROWN = (48,22,8)
 state = "load"
 winner = "PLAYER1"
 pauseTime = 0
+ifDraw = False
 
 sfxVolume = 0.75
 musicVolume = 0.75

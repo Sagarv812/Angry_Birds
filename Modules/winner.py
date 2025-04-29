@@ -4,8 +4,11 @@ import Modules.settings as settings
 def winnerAnimation(screen):
     
     scale = 2
-    winnerName = settings.bigFont.render(settings.winner+"  WINS!!",True,settings.RED)
-    winnerName = py.transform.scale(winnerName, (settings.width/scale, settings.height/(scale*3.22)))
+    if settings.ifDraw == True:
+        winnerName = settings.bigFont.render("DRAW",True,settings.RED)
+    else:
+        winnerName = settings.bigFont.render(settings.winner+"  WINS!!",True,settings.RED)
+    winnerName = py.transform.scale_by(winnerName, settings.width*2/1920)
     winnerName_rect = winnerName.get_rect()
     bird = settings.red
     scale = 4

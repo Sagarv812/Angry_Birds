@@ -311,6 +311,8 @@ def playGame(screen):
     backImg = py.image.load("Media/back.png")
     backImg = py.transform.scale(backImg, quitImg.get_size())
     backImg_rect = backImg.get_rect()
+
+    lastTurn = False
     
 
     while True:
@@ -480,9 +482,19 @@ def playGame(screen):
         #When it is Player 1's turn
         elif state == "player1":
             #Check for winner
-            if Players.Player2.score >= 480:
+            if Players.Player2.score >= 480 and Players.Player1.score>=480:
+                settings.state = "winner"
+                settings.winner = "DRAW"
+                settings.ifDraw = True
+                return
+            
+            elif Players.Player2.score >= 480:
                 settings.state = "winner"
                 settings.winner = Players.Player2.name
+                return
+            elif Players.Player1.score >= 480:
+                settings.state = "winner"
+                settings.winner = Players.Player1.name
                 return
             
             displayBirds(screen,1,birdNos1,sling_rect,birdsPlay1)
@@ -563,7 +575,7 @@ def playGame(screen):
         elif state == "player2":
 
             #Checking for winner
-            if Players.Player1.score >= 480:
+            if Players.Player1.score >= 480 and lastTurn:
                 settings.state = "winner"
                 settings.winner = Players.Player1.name
                 return
